@@ -1,3 +1,9 @@
-https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/
-https://www.rfc-editor.org/rfc/rfc2812#section-1.1
-https://www.geeksforgeeks.org/socket-programming-cc/
+basic socket connections:
+	https://www.geeksforgeeks.org/socket-programming-in-cc-handling-multiple-clients-on-server-without-multi-threading/
+	https://www.geeksforgeeks.org/socket-programming-cc/
+
+IRC protocol:
+	https://www.rfc-editor.org/rfc/rfc2812#section-1.1
+
+reference client:
+	https://hexchat.github.io/
