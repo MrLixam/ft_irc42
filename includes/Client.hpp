@@ -3,7 +3,8 @@
 
 class Client
 {
-
+	private:
+		int fd;
 };
 
 #endif
