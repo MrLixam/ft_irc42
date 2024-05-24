@@ -26,9 +26,11 @@ void Server::run(void)
 {
 	std::cout << "Server Starting ..." << std::endl;
 	
+	fd_set client_fds;
+
 }
 
-static void Server::sig_handler(int sig, siginfo_t *info, void *context)
+void Server::sig_handler(int sig)
 {
 	_signal = 1;
 }
