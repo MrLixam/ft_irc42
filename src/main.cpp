@@ -18,5 +18,15 @@ int main(int argc, char **argv)
 		std::cout << "Invalid arguments" << std::endl;
 		return (1);
 	}
+	Server irc_serv(strtol(argv[1], NULL, 10), argv[2]);
+	try
+	{
+		irc_serv.init();
+		irc_serv.run();
+	}
+	catch (std::exception &e)
+	{
+		std::cout << "Error: " << e.what() << std::endl;
+	}
 	return (0);
 }

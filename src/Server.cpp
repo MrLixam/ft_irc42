@@ -1,6 +1,11 @@
-#include "../includes/irc_serv.hpp"
+#include "../includes/ircserv.hpp"
+#include "../includes/Server.hpp"
+#include <arpa/inet.h>
 #include <iostream>
+#include <poll.h>
 #include <sys/socket.h>
+#include <stdexcept>
+#include <fcntl.h>
 
 Server::Server(void)
 {
@@ -22,12 +27,38 @@ Server::~Server(void)
 	std::cout << "Server Shutdown" << std::endl;
 }
 
-void Server::run(void)
+void Server::init(void)
 {
 	std::cout << "Server Starting ..." << std::endl;
 	
-	fd_set client_fds;
+	pollfd ServPoll;
+	sockaddr_in addr;
 
+
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(_port);
+	addr.sin_addr.s_addr = INADDR_ANY;
+	_servSocketFd = socket(AF_INET, SOCK_STREAM, 0);
+	if (_servSocketFd == -1)
+		throw std::runtime_error("socket creation failed");
+	
+	int opt = 1;
+	if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+		throw std::runtime_error("init: setting socket option SO_REUSEADDR failed");
+	if (fcntl(_servSocketFd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::runtime_error("init: setting socket option O_NONBLOCK failed");
+	if (bind(_servSocketFd, (sockaddr *)&addr, sizeof(addr)) == -1)
+		throw std::runtime_error("init: setting bind() on server socket failed");
+	if (listen(_servSocketFd, SOMAXCONN) == -1)
+		throw std::runtime_error("init: setting listen() on server socket failed");
+	
+	ServPoll.fd = _servSocketFd;
+	ServPoll.revents = 0;
+	ServPoll.events = POLLIN;
+
+	fdvec.push_back(ServPoll);
+
+	std::cout << "Server Started." << std::endl;
 }
 
 void Server::sig_handler(int sig)

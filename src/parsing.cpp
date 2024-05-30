@@ -18,7 +18,7 @@ int parseArgs(char **argv)
 	if (port < 0)
 	{
 		std::cout << "port can't be negative" << std::endl;
+		return (1);
 	}
-	std::string password = argv[2];
-
+	return (0);
 }
