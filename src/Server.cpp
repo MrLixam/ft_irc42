@@ -34,10 +34,10 @@ void Server::init(void)
 	pollfd ServPoll;
 	sockaddr_in addr;
 
-
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(_port);
 	addr.sin_addr.s_addr = INADDR_ANY;
+
 	_servSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_servSocketFd == -1)
 		throw std::runtime_error("socket creation failed");
