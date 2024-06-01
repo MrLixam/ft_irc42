@@ -34,29 +34,28 @@ void Server::init(void)
 	pollfd ServPoll;
 	sockaddr_in addr;
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(_port);
-	addr.sin_addr.s_addr = INADDR_ANY;
-
+	addr.sin_family = AF_INET; //IPV4 setup
+	addr.sin_port = htons(_port); //int to actual port byte data conversion
+	addr.sin_addr.s_addr = INADDR_ANY; //accept connexion from any ip adress
 	_servSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_servSocketFd == -1)
 		throw std::runtime_error("socket creation failed");
 	
 	int opt = 1;
-	if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+	if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) //make port reusable in case of restart etc.
 		throw std::runtime_error("init: setting socket option SO_REUSEADDR failed");
-	if (fcntl(_servSocketFd, F_SETFL, O_NONBLOCK) == -1)
+	if (fcntl(_servSocketFd, F_SETFL, O_NONBLOCK) == -1) //make actions on port nonblocking
 		throw std::runtime_error("init: setting socket option O_NONBLOCK failed");
-	if (bind(_servSocketFd, (sockaddr *)&addr, sizeof(addr)) == -1)
+	if (bind(_servSocketFd, (sockaddr *)&addr, sizeof(addr)) == -1) //bind the socket to an interface
 		throw std::runtime_error("init: setting bind() on server socket failed");
-	if (listen(_servSocketFd, SOMAXCONN) == -1)
+	if (listen(_servSocketFd, SOMAXCONN) == -1) //set backup queue of the server to max value
 		throw std::runtime_error("init: setting listen() on server socket failed");
 	
 	ServPoll.fd = _servSocketFd;
 	ServPoll.revents = 0;
-	ServPoll.events = POLLIN;
+	ServPoll.events = POLLIN; //setup server awaited events to read in
 
-	fdvec.push_back(ServPoll);
+	fdvec.push_back(ServPoll); //add fd to fd list for poll
 
 	std::cout << "Server Started." << std::endl;
 }
