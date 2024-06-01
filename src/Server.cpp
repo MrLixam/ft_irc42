@@ -61,7 +61,41 @@ void Server::init(void)
 	std::cout << "Server Started." << std::endl;
 }
 
+
+void Server::run(void)
+{
+	while (_signal == false)
+	{
+		if (poll(fdvec.begin().base(), fdvec.size(), -1) == -1)
+		{
+			if (_signal == false)
+				throw std::runtime_error("run: poll() failed");
+			return ;
+		}
+		for (std::vector<pollfd>::iterator it = fdvec.begin(); it != fdvec.end(); it++)
+		{
+			if (it->revents == 0)
+				continue;
+			if (it->revents & POLLIN)
+			{
+				if (it->fd == _servSocketFd)
+					//ici pour quoi faire quand un client se connecte;
+					continue ;
+				else
+					//ici pour recevoir data
+					continue ;
+			}
+			if (it->revents & POLLHUP)
+			{
+				//ici pour deco d'un client :)s
+				continue;
+			}
+		}
+	}
+	//deco du serv, il faudra fermer les fd, etc..
+}
+
 void Server::sig_handler(int sig)
 {
-	_signal = 1;
+	_signal = true;
 }

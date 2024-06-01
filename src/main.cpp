@@ -28,5 +28,6 @@ int main(int argc, char **argv)
 	{
 		std::cout << "Error: " << e.what() << std::endl;
 	}
+	std::cout << "Server has Shutdown." << std::endl;
 	return (0);
 }
