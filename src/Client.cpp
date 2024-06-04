@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: r <marvin@42.fr>                           +#+  +:+       +#+        */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 13:55:51 by r                ###   ########.fr       */
+/*   Updated: 2024/06/04 17:43:57 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ Client	&Client::operator=( const Client& rhs )
 }
 
 // Getters 
-	int Client::getFd() { return _fd; }
-	std::string Client::getNickname() { return _nickname; }
-	std::string Client::getUsername() { return _username; }
+	int Client::getFd() const { return _fd; }
+	std::string Client::getNickname() const { return _nickname; }
+	std::string Client::getUsername() const { return _username; }
  
 // Setters 
 	void Client::setFd(int newFd) { _fd = newFd; }

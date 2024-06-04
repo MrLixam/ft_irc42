@@ -15,28 +15,38 @@
 class Server
 {
 	private:
-		std::set<Client> _clients; //list of connected clients, std::set used for better lookup times
-		std::set<Channel> _channels;
-		std::vector<pollfd> fdvec;
+		std::set<Client>	_clients; //list of connected clients, std::set used for better lookup times
+		std::set<Channel>	_channels;
+		std::vector<pollfd>	fdvec;
 
-		int	_port;			
-		std::string	_password;	//arguments given as input.
+		int					_port;	
+		std::string			_password;	//arguments given as input.
 
-		static bool _signal; //used to shutdown the server when signals are received
+		static bool			_signal; //used to shutdown the server when signals are received
 
-		struct addrinfo _hints;
-		struct addrinfo _servRes;
-		int _servSocketFd;
+		struct addrinfo		_hints;
+		struct addrinfo		_servRes;
+		int					_servSocketFd;
 			
-	public:
-		static void sig_handler(int sig);
+	public:		
+		//Constructors
 		Server(void);
 		Server(int port, std::string password);
 		~Server(void);
-		void init(void);
-		void run(void);
-		void newClient();
-		void receiveData(int fd);
+		
+		//signal handler
+		static void	sig_handler(int sig);
+
+		//Getters
+		int			getFd(void) const;
+		int			getPort(void) const;
+		std::string	getPwd(void) const;
+		
+		//
+		void		init(void);
+		void		run(void);
+		void		newClient();
+		void		receiveData(int fd);
 };
 
 #endif

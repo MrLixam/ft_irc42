@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: r <marvin@42.fr>                           +#+  +:+       +#+        */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 17:11:33 by r                ###   ########.fr       */
+/*   Updated: 2024/06/04 17:46:12 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define CHANNEL_HPP
 # include <iostream>
 # include <string>
+# include <set>
+# include "Client.hpp"
 
 // Class definition
 class Channel
@@ -32,17 +34,17 @@ class Channel
 		~Channel(); 
 		Channel& operator=( const Channel &rhs); 
 	// Getters 
-		std::string getTopic(); 
-		bool 		getInvite(); 
-		bool 		getTopic_op(); 
-		std::string getPassword(); 
+		std::string getTopic() const; 
+		bool 		getInvite() const; 
+		bool 		getTopic_op() const; 
+		std::string getPassword() const; 
 	// Setters 
 		void setTopic(std::string _topic); 
 		void setInvite(bool _invite); 
 		void setTopic_op(bool _topic_op); 
 		void setPassword(std::string _password); 
 	// Output 
-		void output(); 
+		void output() const; 
 }; 
  
 #endif

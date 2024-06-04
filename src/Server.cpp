@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
+/*   Updated: 2024/06/04 17:51:23 by lvincent         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/ircserv.hpp"
 #include "../includes/Server.hpp"
 #include <arpa/inet.h>
@@ -26,6 +38,10 @@ Server::~Server(void)
 {
 	std::cout << "Server Shutdown" << std::endl;
 }
+
+int			Server::getFd(void) const { return _servSocketFd; }
+int			Server::getPort(void) const { return _port; }
+std::string	Server::getPwd(void) const { return _password; }
 
 void Server::init(void)
 {

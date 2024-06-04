@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: r <marvin@42.fr>                           +#+  +:+       +#+        */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 17:13:51 by r                ###   ########.fr       */
+/*   Updated: 2024/06/04 17:46:04 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 // Constructor initializes attributes to 0 by default 
 
-Channel::Channel() : _clients(0), _topic(0), _invite(0), _topic_op(0), _password(0)
+Channel::Channel() : _topic(0), _invite(0), _topic_op(0), _password(0)
 {
 	std::cout << "Channel constructor called" << std::endl;
 }
@@ -36,10 +36,10 @@ Channel	&Channel::operator=( const Channel& rhs )
 }
 
 // Getters 
-	std::string Channel::getTopic() { return _topic; }
-	bool Channel::getInvite() { return _invite; }
-	bool Channel::getTopic_op() { return _topic_op; }
-	std::string Channel::getPassword() { return _password; }
+	std::string Channel::getTopic() const { return _topic; }
+	bool Channel::getInvite() const { return _invite; }
+	bool Channel::getTopic_op() const { return _topic_op; }
+	std::string Channel::getPassword() const { return _password; }
  
 // Setters 
 	void Channel::setTopic(std::string newTopic) { _topic = newTopic; }
@@ -48,8 +48,8 @@ Channel	&Channel::operator=( const Channel& rhs )
 	void Channel::setPassword(std::string newPassword) { _password = newPassword; }
  
 // Output
-	void Channel::output()
-{	std::cout << "clients : " << _clients << std::endl;
+	void Channel::output() const
+{	std::cout << "clients : placeholder" << std::endl;
 	std::cout << "topic : " << _topic << std::endl;
 	std::cout << "invite : " << _invite << std::endl;
 	std::cout << "topic_op : " << _topic_op << std::endl;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: r <marvin@42.fr>                           +#+  +:+       +#+        */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 13:55:48 by r                ###   ########.fr       */
+/*   Updated: 2024/06/04 17:43:41 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ class Client
 		~Client(); 
 		Client& operator=( const Client &rhs); 
 	// Getters 
-		int getFd(); 
-		std::string getNickname(); 
-		std::string getUsername(); 
+		int getFd() const; 
+		std::string getNickname() const; 
+		std::string getUsername() const; 
 	// Setters 
 		void setFd(int _fd); 
 		void setNickname(std::string _nickname); 
