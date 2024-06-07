@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/07 10:12:22 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/07 11:33:56 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void Server::init(void)
 	addr.sin_addr.s_addr = INADDR_ANY; //accept connexion from any ip adress
 	_servSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_servSocketFd == -1)
-		throw std::runtime_error("socket creation failed");
+		throw std::runtime_error("init: socket creation failed");
 	
 	int opt = 1;
 	if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) //make port reusable in case of restart etc.
@@ -96,6 +96,7 @@ int Server::newClient(void)
 		client_pollfd.events = POLLOUT | POLLIN;
 	
 		_fdvec.push_back(client_pollfd);
+		_clients.insert()
 		std::cout << "Client id: " << client_sock << " connected" << std::endl;
 	}
 	return (0);
