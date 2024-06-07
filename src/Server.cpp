@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/04 17:51:23 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/07 10:12:22 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,23 +71,47 @@ void Server::init(void)
 	ServPoll.revents = 0;
 	ServPoll.events = POLLIN; //setup server awaited events to read in
 
-	fdvec.push_back(ServPoll); //add fd to fd list for poll
+	_fdvec.push_back(ServPoll); //add fd to fd list for poll
 
 	std::cout << "Server Started." << std::endl;
 }
 
+int Server::newClient(void)
+{
+	sockaddr_in clientaddr;
+	socklen_t size = sizeof(sockaddr_in);
+
+	int client_sock = accept(_servSocketFd, (sockaddr *)&clientaddr, &size);
+	if (client_sock == -1)
+	{
+		std::cout << "newClient(): accept() failed" << std::endl;
+		return (1);
+	}
+	if (_fdvec.size() - 1 < MAX_CLIENTS)
+	{
+		pollfd client_pollfd;
+		Client new_client(client_sock, "default", "default");
+
+		client_pollfd.fd = client_sock;
+		client_pollfd.events = POLLOUT | POLLIN;
+	
+		_fdvec.push_back(client_pollfd);
+		std::cout << "Client id: " << client_sock << " connected" << std::endl;
+	}
+	return (0);
+}
 
 void Server::run(void)
 {
 	while (_signal == false)
 	{
-		if (poll(fdvec.begin().base(), fdvec.size(), -1) == -1)
+		if (poll(_fdvec.begin().base(), _fdvec.size(), -1) == -1)
 		{
 			if (_signal == false)
 				throw std::runtime_error("run: poll() failed");
 			return ;
 		}
-		for (std::vector<pollfd>::iterator it = fdvec.begin(); it != fdvec.end(); it++)
+		for (std::vector<pollfd>::iterator it = _fdvec.begin(); it != _fdvec.end(); it++)
 		{
 			if (it->revents == 0)
 				continue;

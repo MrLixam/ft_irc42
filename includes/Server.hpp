@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <set>
+#include <map>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <csignal>
@@ -15,9 +15,9 @@
 class Server
 {
 	private:
-		std::set<Client>	_clients; //list of connected clients, std::set used for better lookup times
-		std::set<Channel>	_channels;
-		std::vector<pollfd>	fdvec;
+		std::map<int, Client>	_clients; //list of connected clients, std::set used for better lookup times
+		std::map<std::string, Channel>	_channels;
+		std::vector<pollfd>	_fdvec;
 
 		int					_port;	
 		std::string			_password;	//arguments given as input.
@@ -45,7 +45,7 @@ class Server
 		//
 		void		init(void);
 		void		run(void);
-		void		newClient();
+		int			newClient();
 		void		receiveData(int fd);
 };
 

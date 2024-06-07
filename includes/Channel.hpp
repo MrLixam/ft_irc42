@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 17:46:12 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/07 11:00:14 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 # define CHANNEL_HPP
 # include <iostream>
 # include <string>
-# include <set>
+# include <map>
 # include "Client.hpp"
 
 // Class definition
 class Channel
 {
 	private:
-		std::set<Client>	_clients;
+		std::map<std::string, Client>	_clients;
 		std::string			_topic;
 		bool				_invite;
 		bool				_topic_op;
