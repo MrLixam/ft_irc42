@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/07 11:33:56 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 07:25:18 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <stdexcept>
 #include <fcntl.h>
+#include <cstring>
 
 Server::Server(void)
 {
@@ -93,13 +94,29 @@ int Server::newClient(void)
 		Client new_client(client_sock, "default", "default");
 
 		client_pollfd.fd = client_sock;
-		client_pollfd.events = POLLOUT | POLLIN;
+		client_pollfd.events = POLLIN | POLLOUT; 
 	
 		_fdvec.push_back(client_pollfd);
-		_clients.insert()
+		_clients.insert({client_sock, new_client});
 		std::cout << "Client id: " << client_sock << " connected" << std::endl;
 	}
 	return (0);
+}
+
+void Server::receiveData(int fd)
+{
+	char buffer[512];
+	std::string message;
+
+	while (true)
+	{
+		ssize_t rdBytes = recv(fd, buffer, 512, 0);
+		if (rdBytes == -1)
+			throw std::runtime_error("receiveData: recv() failed");
+		if (!rdBytes)
+			break;
+		message.append(buffer, rdBytes);
+	}
 }
 
 void Server::run(void)
@@ -119,16 +136,9 @@ void Server::run(void)
 			if (it->revents & POLLIN)
 			{
 				if (it->fd == _servSocketFd)
-					//ici pour quoi faire quand un client se connecte;
-					continue ;
+					newClient();
 				else
-					//ici pour recevoir data
-					continue ;
-			}
-			if (it->revents & POLLHUP)
-			{
-				//ici pour deco d'un client :)s
-				continue;
+					receiveData(it->fd);
 			}
 		}
 	}
