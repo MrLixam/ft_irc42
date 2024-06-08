@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 07:25:18 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 10:50:41 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ Server::~Server(void)
 	std::cout << "Server Shutdown" << std::endl;
 }
 
-int			Server::getFd(void) const { return _servSocketFd; }
-int			Server::getPort(void) const { return _port; }
-std::string	Server::getPwd(void) const { return _password; }
+int			Server::getFd(void) const	{ return _servSocketFd; }
+int			Server::getPort(void) const	{ return _port; }
+std::string	Server::getPwd(void) const	{ return _password; }
 
 void Server::init(void)
 {

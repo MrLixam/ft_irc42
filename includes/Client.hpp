@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 17:43:41 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 10:48:10 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,23 @@ class Client
 	public:
 	// Constructor 
 		Client(); 
-		Client( const Client &rhs); 
+		Client(const Client &rhs); 
 		Client(int newFd, std::string newNickname, std::string newUsername);
 		~Client(); 
-		Client& operator=( const Client &rhs); 
+		Client& operator=(const Client &rhs); 
+	
 	// Getters 
-		int getFd() const; 
-		std::string getNickname() const; 
-		std::string getUsername() const; 
+		int getFd(void) const; 
+		std::string getNickname(void) const; 
+		std::string getUsername(void) const; 
+	
 	// Setters 
-		void setFd(int _fd); 
+		void setFd(int fd); 
 		void setNickname(std::string _nickname); 
 		void setUsername(std::string _username); 
+	
 	// Output 
-		void output(); 
+		void output(void); 
 }; 
  
 #endif

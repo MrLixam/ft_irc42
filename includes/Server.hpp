@@ -15,18 +15,18 @@
 class Server
 {
 	private:
-		std::map<int, Client>	_clients; //list of connected clients, std::set used for better lookup times
+		std::map<int, Client>			_clients; //list of connected clients, std::set used for better lookup times
 		std::map<std::string, Channel>	_channels;
-		std::vector<pollfd>	_fdvec;
+		std::vector<pollfd>				_fdvec;
 
-		int					_port;	
-		std::string			_password;	//arguments given as input.
+		int								_port;	
+		std::string						_password;	//arguments given as input.
 
-		static bool			_signal; //used to shutdown the server when signals are received
+		static bool						_signal; //used to shutdown the server when signals are received
 
-		struct addrinfo		_hints;
-		struct addrinfo		_servRes;
-		int					_servSocketFd;
+		struct addrinfo					_hints;
+		struct addrinfo					_servRes;
+		int								_servSocketFd;
 			
 	public:		
 		//Constructors

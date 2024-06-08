@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/04 17:43:57 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 10:49:37 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Client::Client() : _fd(0), _nickname(0), _username(0)
 	std::cout << "Client constructor called" << std::endl;
 }
 
-Client::Client( const Client& rhs)
+Client::Client(const Client& rhs)
 {
 	std::cout << "Client copy constructor called" << std::endl;
 	*this = rhs;
@@ -34,24 +34,24 @@ Client::~Client()
 	std::cout << "Client destructor called" << std::endl;
 }
 
-Client	&Client::operator=( const Client& rhs )
+Client	&Client::operator=(const Client& rhs)
 {
 	(void)rhs;
 	return *this;
 }
 
 // Getters 
-	int Client::getFd() const { return _fd; }
-	std::string Client::getNickname() const { return _nickname; }
-	std::string Client::getUsername() const { return _username; }
+	int Client::getFd(void) const				{ return _fd; }
+	std::string Client::getNickname(void) const	{ return _nickname; }
+	std::string Client::getUsername(void) const	{ return _username; }
  
 // Setters 
-	void Client::setFd(int newFd) { _fd = newFd; }
-	void Client::setNickname(std::string newNickname) { _nickname = newNickname; }
-	void Client::setUsername(std::string newUsername) { _username = newUsername; }
+	void Client::setFd(int fd)							{ _fd = fd; }
+	void Client::setNickname(std::string newNickname)	{ _nickname = newNickname; }
+	void Client::setUsername(std::string newUsername)	{ _username = newUsername; }
  
 // Output
-	void Client::output()
+void Client::output(void)
 {	std::cout << "fd : " << _fd << std::endl;
 	std::cout << "nickname : " << _nickname << std::endl;
 	std::cout << "username : " << _username << std::endl;

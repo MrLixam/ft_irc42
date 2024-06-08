@@ -3,6 +3,6 @@
 
 #define MAX_CLIENTS 1024
 
-int parseArgs(char **argv);
+int	parseArgs(char **argv);
 
 #endif
