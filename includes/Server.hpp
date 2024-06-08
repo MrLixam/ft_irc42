@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
+/*   Updated: 2024/06/08 15:52:27 by lvincent         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -19,7 +31,7 @@ class Server
 	private:
 		std::map<int, Client>			_clients; //list of connected clients, std::set used for better lookup times
 		std::map<std::string, Channel>	_channels;
-		std::vector<pollfd>				_fdvec;
+		std::vector<struct pollfd>		_fdvec;
 
 		int								_port;	
 		std::string						_password;	//arguments given as input.
@@ -43,7 +55,7 @@ class Server
 		void		init(void);
 		void		run(void);
 		int			newClient();
-		void		receiveData(std::vector<pollfd>::iterator it);
+		void		receiveData(std::vector<pollfd>::iterator &it);
 
 		//Public member variables
 };

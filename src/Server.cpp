@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 14:04:21 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 15:51:47 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,38 +79,39 @@ void Server::init(void)
 
 int Server::newClient(void)
 {
-	sockaddr_in clientaddr;
-	socklen_t size = sizeof(sockaddr_in);
+	struct sockaddr_in clientaddr;
+	socklen_t size = sizeof(struct sockaddr_in);
 
-	int client_sock = accept(_servSocketFd, (sockaddr *)&clientaddr, &size);
+	int client_sock = accept(_servSocketFd, (struct sockaddr *)&clientaddr, &size);
 	if (client_sock == -1)
 	{
 		std::cout << "newClient(): accept() failed" << std::endl;
 		return (-1);
 	}
 	std::cout << "newClient: " << client_sock << std::endl;
-	pollfd client_pollfd;
+	struct pollfd client_pollfd;
 
+	client_pollfd.revents = 0;
 	client_pollfd.fd = client_sock;
 	client_pollfd.events = POLLIN | POLLOUT; 
 
 	_fdvec.push_back(client_pollfd);
 	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock, "default", "default")));
-	std::cout << "Client id: " << _fdvec[1].fd << " connected" << std::endl;
+	std::cout << "Client id: " << client_sock << " connected" << std::endl;
 	return (0);
 }
 
-void Server::receiveData(std::vector<pollfd>::iterator it)
+void Server::receiveData(std::vector<pollfd>::iterator &it)
 {
 	char buffer[1024];
 	std::string message;
 
 	errno = 0;
+	memset(buffer, 0, 1024);
 	std::cout << "file descriptor:" << it->fd << " being read from" << std::endl;
 	ssize_t rdBytes = recv(it->fd, buffer, 1024, 0);
 	if (rdBytes == -1)
 	{
-		perror("issue is: ");
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 		throw std::runtime_error("receiveData: recv() failed");
@@ -119,6 +120,7 @@ void Server::receiveData(std::vector<pollfd>::iterator it)
 	{
 		std::cout << "Client id: " << it->fd << " disconnected" << std::endl;
 		_clients.erase(it->fd);
+		close(it->fd);
 		it = _fdvec.erase(it);
 		return;
 	}
@@ -143,9 +145,18 @@ void Server::run(void)
 				if (it->fd == _servSocketFd)
 					newClient();
 				else
+				{
 					receiveData(it);
+					if (it == _fdvec.end())
+						break;
+				}
 			}
 		}
+	}
+	while(_fdvec.size() != 0)
+	{
+		close(_fdvec[0].fd);
+		_fdvec.erase(_fdvec.begin());
 	}
 	//deco du serv, il faudra fermer les fd, etc..
 }
