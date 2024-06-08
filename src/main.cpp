@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:31 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 10:52:23 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 12:36:56 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,15 @@
 #include "../includes/ircserv.hpp"
 #include <csignal>
 #include <iostream>
+#include <cstdlib>
+
+bool server_signal = false;
+
+void sig_handler(int sig)
+{
+	(void)sig;
+	server_signal = true;
+}
 
 int main(int argc, char **argv)
 {
@@ -24,8 +33,8 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	
-	signal(SIGINT, Server::sig_handler);
-	signal(SIGTERM, Server::sig_handler);
+	signal(SIGINT, sig_handler);
+	signal(SIGTERM, sig_handler);
 	
 	if (parseArgs(argv))
 	{
@@ -44,6 +53,5 @@ int main(int argc, char **argv)
 		std::cout << "Error: " << e.what() << std::endl;
 	}
 	
-	std::cout << "Server has Shutdown." << std::endl;
 	return (0);
 }

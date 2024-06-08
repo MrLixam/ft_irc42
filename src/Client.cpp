@@ -6,11 +6,11 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/08 11:21:22 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 12:08:13 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include "../includes/Client.hpp"
 // Constructor initializes attributes to 0 by default 
 
 Client::Client() : _fd(0), _nickname(0), _username(0)

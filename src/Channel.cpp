@@ -6,11 +6,11 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/06/08 11:21:17 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 12:07:56 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Channel.hpp"
+#include "../includes/Channel.hpp"
 // Constructor initializes attributes to 0 by default 
 
 Channel::Channel() : _topic(0), _invite(0), _topic_op(0), _password(0)
