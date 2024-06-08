@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/08 10:48:10 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 10:58:24 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ class Client
 	
 	// Setters 
 		void setFd(int fd); 
-		void setNickname(std::string _nickname); 
-		void setUsername(std::string _username); 
+		void setNickname(std::string nickname); 
+		void setUsername(std::string username); 
 	
 	// Output 
 		void output(void); 

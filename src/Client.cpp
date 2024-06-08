@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/08 10:49:37 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 10:58:13 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ Client	&Client::operator=(const Client& rhs)
  
 // Setters 
 	void Client::setFd(int fd)							{ _fd = fd; }
-	void Client::setNickname(std::string newNickname)	{ _nickname = newNickname; }
-	void Client::setUsername(std::string newUsername)	{ _username = newUsername; }
+	void Client::setNickname(std::string nickname)	{ _nickname = nickname; }
+	void Client::setUsername(std::string username)	{ _username = username; }
  
 // Output
 void Client::output(void)
