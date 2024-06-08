@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/06/08 11:02:51 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 11:21:17 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ Channel	&Channel::operator=(const Channel& rhs)
 	std::string Channel::getPassword(void) const	{ return _password; }
  
 // Setters 
-	void Channel::setTopic(std::string topic)			{ _topic = topic; }
-	void Channel::setInvite(bool invite)				{ _invite = invite; }
-	void Channel::setTopic_op(bool topic_op)			{ _topic_op = topic_op; }
-	void Channel::setPassword(std::string password)		{ _password = password; }
+	void Channel::setTopic(std::string topic)		{ _topic = topic; }
+	void Channel::setInvite(bool invite)			{ _invite = invite; }
+	void Channel::setTopic_op(bool topic_op)		{ _topic_op = topic_op; }
+	void Channel::setPassword(std::string password)	{ _password = password; }
  
 // Output
 	void Channel::output(void) const
