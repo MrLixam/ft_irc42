@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 15:52:27 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/11 12:03:14 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ class Server
 		//Member functions
 		void		init(void);
 		void		run(void);
-		int			newClient();
-		void		receiveData(std::vector<pollfd>::iterator &it);
+		int			newClient(std::vector<struct pollfd>& new_fd);
+		void		receiveData(std::vector<struct pollfd>::iterator &it);
 
 		//Public member variables
 };

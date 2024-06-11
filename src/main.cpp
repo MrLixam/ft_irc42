@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:31 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 12:36:56 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/08 15:55:52 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,5 @@ int main(int argc, char **argv)
 	{
 		std::cout << "Error: " << e.what() << std::endl;
 	}
-	
 	return (0);
 }

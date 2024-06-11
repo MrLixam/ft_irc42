@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 15:51:47 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/11 12:20:49 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,17 @@ void Server::init(void)
 		throw std::runtime_error("init: setting bind() on server socket failed");
 	if (listen(_servSocketFd, SOMAXCONN) == -1) //set backup queue of the server to max value
 		throw std::runtime_error("init: setting listen() on server socket failed");
-	
 	ServPoll.fd = _servSocketFd;
 	ServPoll.revents = 0;
 	ServPoll.events = POLLIN; //setup server awaited events to read in
 
 	_fdvec.push_back(ServPoll); //add fd to fd list for poll
 
+	std::cout << "server socket fd: " << _servSocketFd << std::endl;
 	std::cout << "Server Started." << std::endl;
 }
 
-int Server::newClient(void)
+int Server::newClient(std::vector<struct pollfd>& new_fd)
 {
 	struct sockaddr_in clientaddr;
 	socklen_t size = sizeof(struct sockaddr_in);
@@ -95,13 +95,13 @@ int Server::newClient(void)
 	client_pollfd.fd = client_sock;
 	client_pollfd.events = POLLIN | POLLOUT; 
 
-	_fdvec.push_back(client_pollfd);
+	new_fd.push_back(client_pollfd);
 	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock, "default", "default")));
 	std::cout << "Client id: " << client_sock << " connected" << std::endl;
 	return (0);
 }
 
-void Server::receiveData(std::vector<pollfd>::iterator &it)
+void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 {
 	char buffer[1024];
 	std::string message;
@@ -138,12 +138,13 @@ void Server::run(void)
 				throw std::runtime_error("run: poll() failed");
 			return ;
 		}
-		for (std::vector<pollfd>::iterator it = _fdvec.begin(); it != _fdvec.end(); it++)
+		std::vector<struct pollfd> new_fds;
+		for(std::vector<pollfd>::iterator it = _fdvec.begin(); it != _fdvec.end(); it++)
 		{
 			if (it->revents & POLLIN)
 			{
 				if (it->fd == _servSocketFd)
-					newClient();
+					newClient(new_fds);
 				else
 				{
 					receiveData(it);
@@ -152,6 +153,7 @@ void Server::run(void)
 				}
 			}
 		}
+		_fdvec.insert(_fdvec.end(), new_fds.begin(), new_fds.end());
 	}
 	while(_fdvec.size() != 0)
 	{

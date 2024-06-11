@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/10 16:05:32 by r                ###   ########.fr       */
+/*   Updated: 2024/06/11 11:38:30 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 #include <string>
 #include <cerrno>
 #include <iostream>
+#include <sstream>
 
-stm	structuring_message(std::string message)
+struct_msg structuring_message(std::string message)
 {
 	struct_msg			msg;
     std::istringstream	iss(message);
