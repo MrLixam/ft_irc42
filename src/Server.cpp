@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/11 12:20:49 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/11 13:44:18 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,30 +51,53 @@ void Server::init(void)
 	pollfd ServPoll;
 	sockaddr_in addr;
 
-	addr.sin_family = AF_INET; //IPV4 setup
-	addr.sin_port = htons(_port); //int to actual port byte data conversion
-	addr.sin_addr.s_addr = INADDR_ANY; //accept connexion from any ip adress
 	_servSocketFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_servSocketFd == -1)
-		throw std::runtime_error("init: socket creation failed");
+		throw std::runtime_error("init: socket creation failed: " + std::string(std::strerror(errno)));
 	
 	int opt = 1;
 	if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) //make port reusable in case of restart etc.
-		throw std::runtime_error("init: setting socket option SO_REUSEADDR failed");
+	{
+		close(_servSocketFd);
+		throw std::runtime_error("init: setting socket option SO_REUSEADDR failed: " + std::string(std::strerror(errno)));
+	}
 	if (fcntl(_servSocketFd, F_SETFL, O_NONBLOCK) == -1) //make actions on port nonblocking
-		throw std::runtime_error("init: setting socket option O_NONBLOCK failed");
+	{
+		close(_servSocketFd);
+		throw std::runtime_error("init: setting socket option O_NONBLOCK failed: " + std::string(std::strerror(errno)));
+	}
+	
+	memset(&addr, 0, sizeof(addr));
+	
+	addr.sin_family = AF_INET; //IPV4 setup
+	addr.sin_port = htons(_port); //int to actual port byte data conversion
+	addr.sin_addr.s_addr = INADDR_ANY; //accept connexion from any ip adress
+	if (addr.sin_port == 0) //just in case, should not really happen, but port 0 isn't valid
+	{
+		close(_servSocketFd);
+		throw(std::runtime_error("init: invalid port number"));
+	}
+	
 	if (bind(_servSocketFd, (sockaddr *)&addr, sizeof(addr)) == -1) //bind the socket to an interface
-		throw std::runtime_error("init: setting bind() on server socket failed");
+	{
+		close(_servSocketFd);
+		throw std::runtime_error("init: setting bind() on server socket failed: " + std::string(std::strerror(errno)));
+	}
 	if (listen(_servSocketFd, SOMAXCONN) == -1) //set backup queue of the server to max value
-		throw std::runtime_error("init: setting listen() on server socket failed");
+	{
+		close(_servSocketFd);
+		throw std::runtime_error("init: setting listen() on server socket failed: " + std::string(std::strerror(errno)));
+	}
+	
 	ServPoll.fd = _servSocketFd;
 	ServPoll.revents = 0;
 	ServPoll.events = POLLIN; //setup server awaited events to read in
 
 	_fdvec.push_back(ServPoll); //add fd to fd list for poll
 
-	std::cout << "server socket fd: " << _servSocketFd << std::endl;
+	std::cout << "Server socket fd: " << _servSocketFd << std::endl;
 	std::cout << "Server Started." << std::endl;
+	std::cout << "Server port is: " << _port << std::endl;
 }
 
 int Server::newClient(std::vector<struct pollfd>& new_fd)

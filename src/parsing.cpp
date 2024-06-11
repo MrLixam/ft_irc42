@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/11 11:38:30 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/11 13:36:18 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ int parseArgs(char **argv)
 		return (1);
 	}
 	
-	if (port < 0)
+	if (port <= 0)
 	{
-		std::cout << "port can't be negative" << std::endl;
+		std::cout << "port can't be negative or 0" << std::endl;
 		return (1);
 	}
 	
