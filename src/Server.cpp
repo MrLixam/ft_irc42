@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/11 13:44:18 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/12 16:01:07 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,44 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock, "default", "default")));
 	std::cout << "Client id: " << client_sock << " connected" << std::endl;
 	return (0);
+}
+
+void	Server::commands(std::string message)
+{
+	struct_msg	msg = structuring_message(message);
+
+	try
+	{
+		if (msg.command.empty())
+			throw 421;
+
+		if (msg.command == "PASS") {
+			// Handle PASS command
+		} else if (msg.command == "NICK") {
+			// Handle NICK command
+		} else if (msg.command == "USER") {
+			// Handle USER command
+		} else if (msg.command == "JOIN") {
+			// Handle JOIN command
+		} else if (msg.command == "PRIVMSG") {
+			// Handle PRIVMSG command
+		} else if (msg.command == "KICK") {
+			// Handle KICK command
+		} else if (msg.command == "INVITE") {
+			// Handle INVITE command
+		} else if (msg.command == "TOPIC") {
+			// Handle TOPIC command
+		} else if (msg.command == "MODE") {
+			// Handle MODE command
+		} else {
+			throw 421;
+		}
+
+	}
+	catch (int e)
+	{
+		std::cout << "send error code " << e << std::endl;
+	}
 }
 
 void Server::receiveData(std::vector<struct pollfd>::iterator &it)

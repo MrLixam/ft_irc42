@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/11 12:03:14 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:18:14 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ extern bool server_signal;
 class Server
 {
 	private:
-		std::map<int, Client>			_clients; //list of connected clients, std::set used for better lookup times
+		std::map<int, Client>			_clients; //list of connected clients
 		std::map<std::string, Channel>	_channels;
 		std::vector<struct pollfd>		_fdvec;
 
@@ -56,6 +56,7 @@ class Server
 		void		run(void);
 		int			newClient(std::vector<struct pollfd>& new_fd);
 		void		receiveData(std::vector<struct pollfd>::iterator &it);
+		void		commands(std::string message);
 
 		//Public member variables
 };

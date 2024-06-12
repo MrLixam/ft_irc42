@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/11 11:39:35 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/12 15:42:33 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef struct structured_message
 	std::list<std::string>	params;
 }							struct_msg;
 
-int	parseArgs(char **argv);
+struct_msg	structuring_message(std::string message);
+int			parseArgs(char **argv);
 
 #endif
