@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/12 15:42:33 by r                ###   ########.fr       */
+/*   Updated: 2024/06/13 10:43:13 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <string>
 
 #define MAX_CLIENTS 1024
-
 
 typedef struct structured_message
 {

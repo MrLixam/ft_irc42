@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/12 15:18:14 by r                ###   ########.fr       */
+/*   Updated: 2024/06/13 10:24:06 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 #include <vector>
 
 extern bool server_signal;
+
+typedef void (*cmdPtr)();
 
 class Server
 {

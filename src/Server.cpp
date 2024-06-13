@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/12 16:01:07 by r                ###   ########.fr       */
+/*   Updated: 2024/06/13 10:46:00 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,35 +124,67 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 	return (0);
 }
 
+std::map<std::string, int> initCmdMap(void)
+{
+	std::map<std::string, int> newMap;
+
+	newMap["PASS"] = 0;
+	newMap["NICK"] = 1;
+	newMap["USER"] = 2;
+	newMap["JOIN"] = 3;
+	newMap["PRIVMSG"] = 4;
+	newMap["KICK"] = 5;
+	newMap["INVITE"] = 6;
+	newMap["TOPIC"] = 7;
+	newMap["MODE"] = 8;
+
+	return (newMap);
+}
+
 void	Server::commands(std::string message)
 {
+
+	static std::map<std::string, int> CommandMap = initCmdMap();
 	struct_msg	msg = structuring_message(message);
 
+	std::map<std::string, int>::iterator it = CommandMap.find(msg.command);
+
+	int commandSwitch = (it != CommandMap.end()) ? it->second : -1;
 	try
 	{
 		if (msg.command.empty())
 			throw 421;
-
-		if (msg.command == "PASS") {
-			// Handle PASS command
-		} else if (msg.command == "NICK") {
-			// Handle NICK command
-		} else if (msg.command == "USER") {
-			// Handle USER command
-		} else if (msg.command == "JOIN") {
-			// Handle JOIN command
-		} else if (msg.command == "PRIVMSG") {
-			// Handle PRIVMSG command
-		} else if (msg.command == "KICK") {
-			// Handle KICK command
-		} else if (msg.command == "INVITE") {
-			// Handle INVITE command
-		} else if (msg.command == "TOPIC") {
-			// Handle TOPIC command
-		} else if (msg.command == "MODE") {
-			// Handle MODE command
-		} else {
-			throw 421;
+		switch (commandSwitch)
+		{
+			case 0:
+				// PASS command
+				break;
+			case 1:
+				//NICK command
+				break;
+			case 2:
+				//USER command
+				break;
+			case 3:
+				//JOIN command
+				break;
+			case 4:
+				//PRIVMSG command
+				break;
+			case 5:
+				//KICK command
+				break;
+			case 6:
+				//INVITE command
+				break;
+			case 7:
+				//TOPIC command
+				break;
+			case 8:
+				//MODE command
+				break;
+			default:
+				throw 421;
 		}
 
 	}
