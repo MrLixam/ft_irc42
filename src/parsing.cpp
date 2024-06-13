@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/12 15:53:05 by r                ###   ########.fr       */
+/*   Updated: 2024/06/13 14:53:21 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,23 @@
 #include <sstream>
 #include <cctype>
 
-struct_msg structuring_message(std::string message)
+bool	isspecial(char c)
+{
+	return ((c >= 0x5B && c <= 0x60) || (c >= 0x7B && c <= 0x7D));
+}
+
+void	format_nickname(std::string nick)
+{
+	if (nick.length() > 9)
+		throw 432;
+	if (!isalpha(nick[0]) && !isspecial(nick[0]))
+		throw;
+	for (int i = 1; i <= 9; i++)
+		if (!isalpha(nick[i]) && !isspecial(nick[i]) && !isdigit(nick[i]) && nick[i] != '-')
+			throw 432;
+}
+
+struct_msg	structuring_message(std::string message)
 {
 	struct_msg			msg;
     std::istringstream	iss(message);
@@ -65,30 +81,6 @@ struct_msg structuring_message(std::string message)
 
     return msg;
 }
-
-bool	isspecial(char c)
-{
-	return ((c >= 0x5B && c <= 0x60) || (c >= 0x7B && c <= 0x7D));
-}
-
-void	format_nickname(std::string nick)
-{
-	if (nick.length() > 9)
-		throw 432;
-	if (!isalpha(nick[0]) && !isspecial(nick[0]))
-		throw;
-	for (int i = 1; i <= 9; i++)
-		if (!isalpha(nick[i]) && !isspecial(nick[i]) && !isdigit(nick[i]) && nick[i] != '-')
-			throw 432;
-}
-
-void	command_nick(struct_msg msg)
-{
-	if (msg.params.size() < 1)
-		throw 461;
-	format_nickname(msg.params.front());
-}
-
 
 int parseArgs(char **argv)
 {

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/13 10:24:06 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/13 15:43:25 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <sys/socket.h>
 #include "Client.hpp"
 #include "Channel.hpp"
+#include "ircserv.hpp"
 #include <vector>
 
 extern bool server_signal;
@@ -52,14 +53,22 @@ class Server
 		int			getFd(void) const;
 		int			getPort(void) const;
 		std::string	getPwd(void) const;
+		Client		getClient(int fd);
 		
 		//Member functions
 		void		init(void);
 		void		run(void);
 		int			newClient(std::vector<struct pollfd>& new_fd);
 		void		receiveData(std::vector<struct pollfd>::iterator &it);
-		void		commands(std::string message);
+		void		commands(std::string message, int fd);
 
+		//Command function
+		void		command_pass(struct_msg msg, int fd);
+		void		command_nick(struct_msg msg, int fd);
+		void		command_user(struct_msg msg, int fd);
+
+		//Utils
+		bool		usernameExists(const std::string username, int fd) const;
 		//Public member variables
 };
 #endif

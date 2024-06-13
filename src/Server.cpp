@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/13 10:46:00 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/13 15:34:11 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 	client_pollfd.events = POLLIN | POLLOUT; 
 
 	new_fd.push_back(client_pollfd);
-	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock, "default", "default")));
+	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock)));
 	std::cout << "Client id: " << client_sock << " connected" << std::endl;
 	return (0);
 }
@@ -141,7 +141,7 @@ std::map<std::string, int> initCmdMap(void)
 	return (newMap);
 }
 
-void	Server::commands(std::string message)
+void	Server::commands(std::string message, int fd)
 {
 
 	static std::map<std::string, int> CommandMap = initCmdMap();
@@ -157,10 +157,10 @@ void	Server::commands(std::string message)
 		switch (commandSwitch)
 		{
 			case 0:
-				// PASS command
+				command_pass(msg, fd);
 				break;
 			case 1:
-				//NICK command
+				command_nick(msg, fd);
 				break;
 			case 2:
 				//USER command
