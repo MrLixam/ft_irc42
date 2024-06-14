@@ -6,16 +6,18 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/13 15:34:11 by r                ###   ########.fr       */
+/*   Updated: 2024/06/14 16:04:21 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ircserv.hpp"
 #include "../includes/Server.hpp"
+#include "../includes/colors.hpp"
 #include <arpa/inet.h>
 #include <iostream>
 #include <poll.h>
 #include <sys/socket.h>
+#include <sys/resource.h>
 #include <stdexcept>
 #include <fcntl.h>
 #include <cstring>
@@ -46,7 +48,7 @@ std::string	Server::getPwd(void) const	{ return _password; }
 
 void Server::init(void)
 {
-	std::cout << "Server Starting ..." << std::endl;
+	std::cout << YELLOW << "Server Starting ..." << RESET << std::endl;
 	
 	pollfd ServPoll;
 	sockaddr_in addr;
@@ -95,9 +97,8 @@ void Server::init(void)
 
 	_fdvec.push_back(ServPoll); //add fd to fd list for poll
 
-	std::cout << "Server socket fd: " << _servSocketFd << std::endl;
-	std::cout << "Server Started." << std::endl;
-	std::cout << "Server port is: " << _port << std::endl;
+	std::cout << BOLD_GREEN << "Server Started." << RESET << std::endl;
+	std::cout << BLUE << "Server port is: " << _port << RESET << std::endl;
 }
 
 int Server::newClient(std::vector<struct pollfd>& new_fd)
@@ -111,7 +112,6 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 		std::cout << "newClient(): accept() failed" << std::endl;
 		return (-1);
 	}
-	std::cout << "newClient: " << client_sock << std::endl;
 	struct pollfd client_pollfd;
 
 	client_pollfd.revents = 0;
@@ -120,7 +120,7 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 
 	new_fd.push_back(client_pollfd);
 	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock)));
-	std::cout << "Client id: " << client_sock << " connected" << std::endl;
+	std::cout << BLUE << "Client id: " << client_sock << " connected" << RESET << std::endl;
 	return (0);
 }
 
@@ -201,7 +201,6 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 
 	errno = 0;
 	memset(buffer, 0, 1024);
-	std::cout << "file descriptor:" << it->fd << " being read from" << std::endl;
 	ssize_t rdBytes = recv(it->fd, buffer, 1024, 0);
 	if (rdBytes == -1)
 	{
@@ -211,7 +210,7 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	}
 	if (rdBytes == 0)
 	{
-		std::cout << "Client id: " << it->fd << " disconnected" << std::endl;
+		std::cout << BLUE << "Client id: " << it->fd << " disconnected" << RESET << std::endl;
 		_clients.erase(it->fd);
 		close(it->fd);
 		it = _fdvec.erase(it);

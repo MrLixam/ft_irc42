@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:31 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/08 15:55:52 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/14 16:04:06 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <csignal>
 #include <iostream>
 #include <cstdlib>
+#include "../includes/colors.hpp"
 
 bool server_signal = false;
 
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
 	
 	if (parseArgs(argv))
 	{
-		std::cout << "Invalid arguments" << std::endl;
+		std::cout << RED << "Invalid arguments" << RESET << std::endl;
 		return (1);
 	}
 	
@@ -50,7 +51,7 @@ int main(int argc, char **argv)
 	}
 	catch (std::exception &e)
 	{
-		std::cout << "Error: " << e.what() << std::endl;
+		std::cerr << RED << "Error: " << e.what() << RESET << std::endl;
 	}
 	return (0);
 }

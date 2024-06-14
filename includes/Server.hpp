@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/13 15:43:25 by r                ###   ########.fr       */
+/*   Updated: 2024/06/14 15:16:34 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class Server
 		struct addrinfo					_hints;
 		struct addrinfo					_servRes;
 		int								_servSocketFd;
+		int								_maxClients;
 			
 	public:		
 		//Constructors

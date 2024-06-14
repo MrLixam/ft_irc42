@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/14 14:19:47 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/14 15:16:21 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 #include <list>
 #include <string>
-
-#define	MAX_CLIENTS				1024
 
 #define	ERR_NOSUCHNICK			401
 #define	ERR_NOSUCHCHANNEL		403
