@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/14 16:04:21 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/16 16:53:17 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,9 @@ std::map<std::string, int> initCmdMap(void)
 	newMap["INVITE"] = 6;
 	newMap["TOPIC"] = 7;
 	newMap["MODE"] = 8;
+	newMap["QUIT"] = 9;
+	newMap["PART"] = 10;
+	newMap["OPER"] = 11;
 
 	return (newMap);
 }
@@ -157,32 +160,29 @@ void	Server::commands(std::string message, int fd)
 		switch (commandSwitch)
 		{
 			case 0:
-				command_pass(msg, fd);
-				break;
+				command_pass(msg, fd); break;
 			case 1:
-				command_nick(msg, fd);
-				break;
+				command_nick(msg, fd); break;
 			case 2:
-				//USER command
-				break;
+				command_user(msg, fd); break;
 			case 3:
-				//JOIN command
-				break;
+				command_join(msg, fd); break;
 			case 4:
-				//PRIVMSG command
-				break;
+				command_privmsg(msg, fd); break;
 			case 5:
-				//KICK command
-				break;
+				command_kick(msg, fd); break;
 			case 6:
-				//INVITE command
-				break;
+				command_invite(msg, fd); break;
 			case 7:
-				//TOPIC command
-				break;
+				command_topic(msg, fd); break;
 			case 8:
-				//MODE command
-				break;
+				command_mode(msg, fd); break;
+			case 9:
+				command_quit(msg, fd); break;
+			case 10:
+				command_part(msg, fd); break;
+			case 11:
+				command_oper(msg, fd); break;
 			default:
 				throw 421;
 		}
@@ -217,7 +217,14 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 		return;
 	}
 	message.append(buffer, rdBytes);
-	std::cout << message << std::endl; 
+
+	Client sourceClient = getClient(it->fd);
+	sourceClient.appendMessageBuffer(message);
+
+	if (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
+	{
+		//call parsing here
+	}
 }
 
 void Server::run(void)

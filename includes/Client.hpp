@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/13 13:16:30 by r                ###   ########.fr       */
+/*   Updated: 2024/06/16 16:19:28 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ class Client
 		int			_fd;
 		std::string	_nickname;
 		std::string	_username;
+		std::string _realname;
+ 		std::string _messageBuffer;
 		bool		_pass;
- 
+
 	public:
 	// Constructor 
 		Client(); 
@@ -34,18 +36,23 @@ class Client
 	
 	// Getters 
 		int 		getFd(void) const; 
-		std::string getNickname(void) const; 
-		std::string getUsername(void) const; 
+		std::string	getNickname(void) const; 
+		std::string	getUsername(void) const;
+		std::string	getRealname(void) const;
+		std::string	getMessageBuffer(void) const;
 		bool		getPass(void) const;
 	
 	// Setters 
-		void	setFd(int fd); 
-		void	setNickname(std::string nickname); 
-		void	setUsername(std::string username); 
-		void	setPass(bool state);
+		void		setFd(int fd); 
+		void		setNickname(std::string nickname); 
+		void		setUsername(std::string username);
+		void		setRealname(std::string realname);
+		void		setMessageBuffer(std::string msg);
+		void		appendMessageBuffer(std::string msg);
+		void		setPass(bool state);
 	
 	// Output 
-		void output(void); 
+		void		output(void); 
 }; 
  
 #endif

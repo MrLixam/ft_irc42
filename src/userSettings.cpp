@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   userSettings.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: r <marvin@42.fr>                           +#+  +:+       +#+        */
+/*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/06/13 15:54:45 by r                ###   ########.fr       */
+/*   Updated: 2024/06/16 16:48:03 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,18 @@ void	Server::command_nick(struct_msg msg, int fd)
 }
 
 void	Server::command_user(struct_msg msg, int fd)
+{
+	(void)msg;
+	(void)fd;
+}
+
+void	Server::command_quit(struct_msg msg, int fd)
+{
+	(void)msg;
+	(void)fd;
+}
+
+void Server::command_part(struct_msg msg, int fd)
 {
 	(void)msg;
 	(void)fd;

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/14 15:16:21 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/16 15:44:18 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ bool		isspecial(char c);
 void		format_nickname(std::string nick);
 struct_msg	structuring_message(std::string message);
 int			parseArgs(char **argv);
+std::string getErrorMessage(std::string errorInfo = "", int errorCode = -1);
 
 #endif

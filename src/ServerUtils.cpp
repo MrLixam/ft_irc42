@@ -6,13 +6,14 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/14 15:33:51 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/16 16:54:01 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+#include "../includes/ircserv.hpp"
 
-std::string getErrorMessage(std::string errorInfo = "", int errorCode = -1)
+std::string getErrorMessage(std::string errorInfo, int errorCode)
 {
 	switch (errorCode)
 	{

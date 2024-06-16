@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/14 15:16:34 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/16 16:49:22 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,24 @@ class Server
 		void		commands(std::string message, int fd);
 
 		//Command function
+		
+			//userSettings.cpp
 		void		command_pass(struct_msg msg, int fd);
 		void		command_nick(struct_msg msg, int fd);
 		void		command_user(struct_msg msg, int fd);
+		void		command_quit(struct_msg msg, int fd);
+		void		command_part(struct_msg msg, int fd);
+		
+			//channelCommands.cpp
+		void		command_join(struct_msg msg, int fd);
+		void		command_privmsg(struct_msg msg, int fd);
+		
+			//operatorCommands.cpp
+		void		command_kick(struct_msg msg, int fd);
+		void		command_invite(struct_msg msg, int fd);
+		void		command_topic(struct_msg msg, int fd);
+		void		command_mode(struct_msg msg, int fd);
+		void		command_oper(struct_msg msg, int fd);
 
 		//Utils
 		bool		usernameExists(const std::string username, int fd) const;

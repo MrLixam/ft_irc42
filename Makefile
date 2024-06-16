@@ -6,7 +6,7 @@
 #    By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/18 05:51:01 by lvincent          #+#    #+#              #
-#    Updated: 2024/06/13 15:55:34 by r                ###   ########.fr        #
+#    Updated: 2024/06/16 16:55:46 by lvincent         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,8 +25,9 @@ SRC_DIR = src
 
 OBJ_DIR = obj
 
-SRC 	=	src/main.cpp src/Channel.cpp src/Client.cpp src/parsing.cpp \
-			src/Server.cpp src/ServerUtils.cpp src/userSettings.cpp
+SRC 	=	src/main.cpp src/Channel.cpp src/Client.cpp src/Server.cpp \
+			src/parsing.cpp src/ServerUtils.cpp \
+			src/userSettings.cpp src/channelCommands.cpp src/operatorCommands.cpp
 OBJ = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 all: $(NAME)
