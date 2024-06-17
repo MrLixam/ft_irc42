@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/06/16 15:54:01 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/17 13:51:19 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,20 @@
 # define CHANNEL_HPP
 # include <iostream>
 # include <string>
-# include <map>
+# include <set>
 # include "Client.hpp"
 
 // Class definition
 class Channel
 {
 	private:
-		std::map<std::string, Client>	_clients;
-		std::string						_topic;
-		bool							_invite;
-		bool							_topic_op;
-		std::string						_password;
+		std::set<int>	_clients;
+		std::set<int>	_operators;
+		std::string		_topic;
+		bool			_invite;
+		bool			_topic_op;
+		std::string		_password;
+		int				_limit;
  
 	public:
 	// Constructor 
@@ -35,16 +37,20 @@ class Channel
 		Channel& operator=(const Channel &rhs); 
 	
 	// Getters 
-		std::string	getTopic(void) const; 
-		bool 		getInvite(void) const; 
-		bool 		getTopic_op(void) const; 
-		std::string	getPassword(void) const; 
+		std::set<int>	getCl(void);
+		std::set<int>	getOp(void);
+		std::string		getTopic(void) const;
+		bool 			getInvite(void) const;
+		bool 			getTopic_op(void) const;
+		std::string		getPassword(void) const;
+		int				getLimit(void) const;
 	
 	// Setters 
-		void		setTopic(std::string _topic); 
-		void		setInvite(bool _invite); 
-		void		setTopic_op(bool _topic_op); 
-		void		setPassword(std::string _password); 
+		void		setTopic(std::string topic); 
+		void		setInvite(bool invite); 
+		void		setTopic_op(bool topic_op); 
+		void		setPassword(std::string password); 
+		void		setLimit(int limit);
 	
 	// Output 
 		void		output(void) const; 

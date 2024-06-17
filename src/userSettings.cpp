@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/06/16 16:48:03 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/17 18:09:07 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,35 @@ void	Server::command_nick(struct_msg msg, int fd)
 
 void	Server::command_user(struct_msg msg, int fd)
 {
-	(void)msg;
-	(void)fd;
+	Client	myClient = this->getClient(fd);
+
+	if (!myClient.getPass())
+		throw 451;
+	if (!myClient.getUsername().empty())
+		throw 462;
+	if (msg.params.size() < 4)
+		throw 431;
+	std::list<std::string>::iterator it = msg.params.begin();
+	myClient.setUsername(*it);
+	std::advance(it, 3);
+	myClient.setRealname(*it);
 }
 
 void	Server::command_quit(struct_msg msg, int fd)
 {
-	(void)msg;
-	(void)fd;
-}
+	Client	myClient = this->getClient(fd);
 
-void Server::command_part(struct_msg msg, int fd)
-{
+	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
+		throw 451;
 	(void)msg;
-	(void)fd;
+//	if (msg.params.size())
+		//send message to all client of same channel + param 1
+//	else
+		//send message to all client of same channel
+	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+	{
+		it->second.getCl().erase(fd);
+		it->second.getOp().erase(fd);
+	}
+	_clients.erase(fd);
 }
