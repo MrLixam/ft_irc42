@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/17 12:49:39 by r                ###   ########.fr       */
+/*   Updated: 2024/06/19 04:25:00 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Server
 		struct addrinfo					_hints;
 		struct addrinfo					_servRes;
 		int								_servSocketFd;
-		int								_maxClients;
+		size_t							_maxClients;
 			
 	public:		
 		//Constructors
@@ -56,11 +56,15 @@ class Server
 		std::string	getPwd(void) const;
 		Client		getClient(int fd);
 		
+		//Setters
+		void		setMaxClients(size_t i);
+
 		//Member functions
 		void		init(void);
 		void		run(void);
 		int			newClient(std::vector<struct pollfd>& new_fd);
 		void		receiveData(std::vector<struct pollfd>::iterator &it);
+		void		sendData(std::vector<struct pollfd>::iterator it);
 		void		commands(std::string message, int fd);
 
 		//Command function
@@ -85,6 +89,5 @@ class Server
 
 		//Utils
 		bool		usernameExists(const std::string username, int fd) const;
-		//Public member variables
 };
 #endif

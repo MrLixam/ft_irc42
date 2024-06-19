@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/17 12:49:27 by r                ###   ########.fr       */
+/*   Updated: 2024/06/19 04:27:25 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,11 @@ Server::~Server(void)
 	std::cout << "Server Shutdown" << std::endl;
 }
 
-int			Server::getFd(void) const	{ return _servSocketFd; }
-int			Server::getPort(void) const	{ return _port; }
-std::string	Server::getPwd(void) const	{ return _password; }
+int			Server::getFd(void) const		{ return _servSocketFd; }
+int			Server::getPort(void) const		{ return _port; }
+std::string	Server::getPwd(void) const		{ return _password; }
+
+void		Server::setMaxClients(size_t i)	{ _maxClients = i; }
 
 void Server::init(void)
 {
@@ -93,9 +95,9 @@ void Server::init(void)
 	
 	ServPoll.fd = _servSocketFd;
 	ServPoll.revents = 0;
-	ServPoll.events = POLLIN; //setup server awaited events to read in
+	ServPoll.events = POLLIN;
 
-	_fdvec.push_back(ServPoll); //add fd to fd list for poll
+	_fdvec.push_back(ServPoll);
 
 	std::cout << BOLD_GREEN << "Server Started." << RESET << std::endl;
 	std::cout << BLUE << "Server port is: " << _port << RESET << std::endl;
@@ -112,11 +114,18 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 		std::cout << "newClient(): accept() failed" << std::endl;
 		return (-1);
 	}
+	if (_clients.size() == _maxClients)
+	{
+		char full_server[24] = "ERROR :Server is full\r\n";
+		send(client_sock, full_server, 23, 0);
+		close(client_sock);
+		return (-1);
+	}
 	struct pollfd client_pollfd;
 
 	client_pollfd.revents = 0;
 	client_pollfd.fd = client_sock;
-	client_pollfd.events = POLLIN | POLLOUT; 
+	client_pollfd.events = POLLIN | POLLOUT;
 
 	new_fd.push_back(client_pollfd);
 	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock)));
@@ -227,6 +236,24 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	}
 }
 
+void	Server::sendData(std::vector<struct pollfd>::iterator it)
+{
+	Client temp = getClient(it->fd);
+	
+	while (!temp.getSendBuffer().empty())
+	{
+		errno = 0;
+		ssize_t bytes_sent = send(it->fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
+		if (bytes_sent == -1)
+		{
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				return;
+			throw std::runtime_error("sendData: send() failed");
+		}
+		temp.getSendBuffer().erase(0, bytes_sent);
+    }
+}
+
 void Server::run(void)
 {
 	while (server_signal == false)
@@ -250,6 +277,10 @@ void Server::run(void)
 					if (it == _fdvec.end())
 						break;
 				}
+			}
+			else if (it->revents & POLLOUT)
+			{
+				sendData(it);
 			}
 		}
 		_fdvec.insert(_fdvec.end(), new_fds.begin(), new_fds.end());

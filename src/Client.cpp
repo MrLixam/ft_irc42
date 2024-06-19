@@ -6,33 +6,23 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/16 16:22:08 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:55:25 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Client.hpp"
 // Constructor initializes attributes to 0 by default 
 
-Client::Client() : _fd(0)
-{
-	std::cout << "Client constructor called" << std::endl;
-}
+Client::Client() : _fd(0) {}
 
 Client::Client(const Client& rhs)
 {
-	std::cout << "Client copy constructor called" << std::endl;
 	*this = rhs;
 }
 
-Client::Client(int newFd) : _fd(newFd), _pass(false)
-{
+Client::Client(int newFd) : _fd(newFd), _pass(false) {}
 
-}
-
-Client::~Client()
-{
-	std::cout << "Client destructor called" << std::endl;
-}
+Client::~Client() {}
 
 Client	&Client::operator=(const Client& rhs)
 {
@@ -47,7 +37,7 @@ Client	&Client::operator=(const Client& rhs)
 	std::string	Client::getRealname(void) const				{ return _realname; }
 	std::string	Client::getMessageBuffer(void) const		{ return _messageBuffer; }
 	bool		Client::getPass(void) const					{ return _pass; }
-
+	std::string Client::getSendBuffer(void) const			{ return _sendBuffer; }
  
 // Setters 
 	void	Client::setFd(int fd)							{ _fd = fd; }
@@ -57,6 +47,8 @@ Client	&Client::operator=(const Client& rhs)
 	void	Client::setMessageBuffer(std::string msg)		{ _messageBuffer = msg; }
 	void	Client::appendMessageBuffer(std::string msg)	{ _messageBuffer += msg; }
 	void	Client::setPass(bool state)						{ _pass = state; }
+	void	Client::setSendBuffer(std::string msg)			{ _sendBuffer = msg; }
+	void	Client::appendSendBuffer(std::string msg)		{ _sendBuffer += msg; }
  
 // Output
 void Client::output(void)

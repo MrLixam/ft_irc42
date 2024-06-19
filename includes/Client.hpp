@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/16 16:19:28 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/18 19:55:24 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ class Client
 		std::string	_username;
 		std::string _realname;
  		std::string _messageBuffer;
+		std::string _sendBuffer;
 		bool		_pass;
-
 	public:
 	// Constructor 
 		Client(); 
@@ -41,6 +41,7 @@ class Client
 		std::string	getRealname(void) const;
 		std::string	getMessageBuffer(void) const;
 		bool		getPass(void) const;
+		std::string	getSendBuffer(void) const;
 	
 	// Setters 
 		void		setFd(int fd); 
@@ -50,6 +51,8 @@ class Client
 		void		setMessageBuffer(std::string msg);
 		void		appendMessageBuffer(std::string msg);
 		void		setPass(bool state);
+		void		setSendBuffer(std::string msg);
+		void		appendSendBuffer(std::string msg);
 	
 	// Output 
 		void		output(void); 
