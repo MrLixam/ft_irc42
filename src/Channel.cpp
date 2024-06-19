@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/06/18 19:57:17 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/19 14:16:25 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,20 +37,20 @@ Channel	&Channel::operator=(const Channel& rhs)
 }
 
 // Getters 
-	std::map<int, Client>	Channel::getCl(void) const					{ return _clients; }
-	std::map<int, Client>	Channel::getOp(void) const					{ return _operators; }
-	std::string				Channel::getTopic(void) const				{ return _topic; }
-	bool					Channel::getInvite(void) const				{ return _invite; }
-	bool					Channel::getTopic_op(void) const			{ return _topic_op; }
-	std::string				Channel::getPassword(void) const			{ return _password; }
-	int						Channel::getLimit(void)	const				{ return _limit; }
+	std::set<int>		Channel::getCl(void) const					{ return _clients; }
+	std::set<int>		Channel::getOp(void) const					{ return _operators; }
+	std::string			Channel::getTopic(void) const				{ return _topic; }
+	bool				Channel::getInvite(void) const				{ return _invite; }
+	bool				Channel::getTopic_op(void) const			{ return _topic_op; }
+	std::string			Channel::getPassword(void) const			{ return _password; }
+	size_t				Channel::getLimit(void)	const				{ return _limit; }
  
 // Setters 
-	void					Channel::setTopic(std::string topic)		{ _topic = topic; }
-	void					Channel::setInvite(bool invite)				{ _invite = invite; }
-	void					Channel::setTopic_op(bool topic_op)			{ _topic_op = topic_op; }
-	void					Channel::setPassword(std::string password)	{ _password = password; }
-	void					Channel::setLimit(int limit)				{ _limit = limit; }
+	void				Channel::setTopic(std::string topic)		{ _topic = topic; }
+	void				Channel::setInvite(bool invite)				{ _invite = invite; }
+	void				Channel::setTopic_op(bool topic_op)			{ _topic_op = topic_op; }
+	void				Channel::setPassword(std::string password)	{ _password = password; }
+	void				Channel::setLimit(int limit)				{ _limit = limit; }
  
 // Output
 	void Channel::output(void) const
@@ -60,7 +60,7 @@ Channel	&Channel::operator=(const Channel& rhs)
 	std::cout << "topic_op : " << _topic_op << std::endl;
 	std::cout << "password : " << _password << std::endl;
 }
- 
+/* 
 void	Channel::sendToAll(int senderFd, std::string message)
 {
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
@@ -76,4 +76,4 @@ void	Channel::sendToAll(std::string message)
 	{
 		it->second.appendSendBuffer(message);
 	}
-}
+}*/

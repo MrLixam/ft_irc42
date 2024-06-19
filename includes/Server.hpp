@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/19 04:25:00 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/19 13:58:55 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,10 @@ class Server
 		//Setters
 		void		setMaxClients(size_t i);
 
+		//iterator
+		typedef typename std::map<std::string, Client>::iterator it_client;
+		typedef typename std::map<std::string, Channel>::iterator it_chan;
+
 		//Member functions
 		void		init(void);
 		void		run(void);
@@ -74,11 +78,13 @@ class Server
 		void		command_nick(struct_msg msg, int fd);
 		void		command_user(struct_msg msg, int fd);
 		void		command_quit(struct_msg msg, int fd);
-		void		command_part(struct_msg msg, int fd);
 		
 			//channelCommands.cpp
 		void		command_join(struct_msg msg, int fd);
 		void		command_privmsg(struct_msg msg, int fd);
+		void		command_part(struct_msg msg, int fd);
+		void    	leave_chan(std::string chan, int fd, std::string msg);
+		void    	join_chan(std::string chan, int fd, std::string key);
 		
 			//operatorCommands.cpp
 		void		command_kick(struct_msg msg, int fd);

@@ -1,0 +1,161 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   format_BNF.cpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: r <marvin@42.fr>                           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/19 18:47:25 by r                 #+#    #+#             */
+/*   Updated: 2024/06/19 19:09:37 by r                ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../includes/ircserv.hpp"
+#include <cstdlib>
+#include <string>
+#include <cerrno>
+#include <iostream>
+#include <sstream>
+#include <cctype>
+
+bool	isspecial(char c)
+{
+	return ((c >= 0x5B && c <= 0x60) || (c >= 0x7B && c <= 0x7D));
+}
+
+void	format_nickname(std::string nick)
+{
+	if (nick.length() > 9)
+		throw 432;
+	if (!isalpha(nick[0]) && !isspecial(nick[0]))
+		throw 432;
+	for (int i = 1; nick[i] && i <= 9; i++)
+		if (!isalpha(nick[i]) && !isspecial(nick[i]) && !isdigit(nick[i]) && nick[i] != '-')
+			throw 432;
+}
+
+bool    format_user(std::string user)
+{
+    for (size_t i = 0; i < user.length(); i++)
+	{
+		char c = user[i];
+		if (!((c >= 0x01 && c <= 0x09) ||
+              (c >= 0x0B && c <= 0x0C) ||
+              (c >= 0x0E && c <= 0x1F) ||
+              (c >= 0x21 && c <= 0x3F) ||
+              c >= 0x41))
+            return (false);
+	}
+    return (true);
+}
+
+bool	format_shortname(std::string name)
+{
+	if (!isalpha(name[0]) && !isdigit(name[0]))
+		return (false);
+	for (size_t i = 1; i < name.length() - 1; i++)
+		if (!isalpha(name[i]) && !isdigit(name[i]) && name[i] != '-')
+			return (false);
+	if (!isalpha(name[name.length() - 1]) && !isdigit(name[name.length() - 1]))
+		return (false);
+    return (true);
+}
+
+bool	format_hostname(std::string name)
+{
+	std::stringstream   ss(name);
+	std::string token;
+	while (getline(ss, token, '.'))
+		if (!format_shortname(token))
+			return (false);
+	return (true);
+}
+
+bool	format_hostaddr(std::string addr)
+{
+	(void)addr;
+	return (true);
+}
+
+bool	format_channelid(std::string chan)
+{
+	std::string channelid = chan.substr(1, 5);
+	for (size_t i = 1; i < channelid.length(); i++)
+		if (!isupper(channelid[i]) && !isdigit(channelid[i]))
+			return (false);
+	return (true);
+}
+
+bool	format_chanstring(std::string chanstring)
+{
+	for (size_t i = 0; i < chanstring.length(); ++i) 
+		if (!(isalnum(chanstring[i]) || chanstring[i] == '_'))
+			return false;
+	return (true);
+}
+
+bool	msgto_channel(std::string chan)
+{
+	int	starting = 1;
+	if (chan[0] != '#' && chan[0] != '+' && chan[0] != '!' && chan[0] != '&')
+		return (false);
+	if (chan[0] == '!')
+	{
+		if (!format_channelid(chan))
+			return (false);
+		starting = 5;
+	}
+    std::string chanstring;
+	size_t colonPos = chan.find(':');
+    if (colonPos != std::string::npos)
+	{
+        chanstring = chan.substr(starting, colonPos - 1);
+        std::string optionalChanstring = chan.substr(colonPos + 1);
+		if (optionalChanstring.empty() || !format_chanstring(optionalChanstring))
+			return (false);
+	}
+	else
+        chanstring = chan.substr(starting);
+	if (chanstring.empty() || !format_chanstring(chanstring))
+		return (false);
+	return (true);
+}
+
+bool	msgto_user(std::string message)
+{
+	std::string::size_type atPos = message.find('@');
+	std::string::size_type perPos = message.find('%');
+	std::string user;
+    if (atPos != std::string::npos)
+	{
+		user = message.substr(0, atPos);
+    	std::string servername = message.substr(atPos + 1);
+		if (!servername.empty() && !format_hostname(servername))
+			return (false);
+    	if (perPos != std::string::npos)
+		{
+    		std::string host = user.substr(perPos + 1);
+			user = user.substr(0, atPos);
+			if (!host.empty() && !format_hostname(host))
+				return (false);
+		}
+	}
+	else if (perPos != std::string::npos)
+	{
+		user = message.substr(0, perPos);
+    	std::string host = message.substr(perPos + 1);
+		if (!host.empty() && !format_hostname(host))
+			return (false);
+	}
+	else
+		return (false);
+	if (!user.empty() && !format_user(user))
+		return (false);
+	return (true);
+}
+
+bool	msgto_nickname(std::string nick)
+{
+	(void)nick;
+	return (true);
+}
