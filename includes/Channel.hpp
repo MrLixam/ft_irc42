@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/06/19 14:16:54 by r                ###   ########.fr       */
+/*   Updated: 2024/06/21 16:00:52 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,6 @@ class Channel
 		Channel(const Channel &rhs);
 		~Channel(); 
 		Channel& operator=(const Channel &rhs); 
-	
-	//Member functions
-		void sendToAll(int senderFd, std::string message);
-		void sendToAll(std::string message);
 
 	// Getters 
 		std::set<int>	getCl(void) const;
@@ -46,7 +42,7 @@ class Channel
 		bool 			getInvite(void) const;
 		bool 			getTopic_op(void) const;
 		std::string		getPassword(void) const;
-		size_t				getLimit(void) const;
+		size_t			getLimit(void) const;
 	
 	// Setters 
 		void			setTopic(std::string topic); 

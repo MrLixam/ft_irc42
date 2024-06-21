@@ -6,12 +6,13 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/16 16:54:01 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/21 16:11:14 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 #include "../includes/ircserv.hpp"
+#include "../includes/colors.hpp"
 
 std::string getErrorMessage(std::string errorInfo, int errorCode)
 {
@@ -75,4 +76,36 @@ Client	Server::getClient(int fd)
 	if (it == _clients.end()) //le fd n'existe pas dans le serveur
 		throw std::runtime_error("invalid fd"); //peu importe juste de la gestion d'erreur
 	return (it->second);
+}
+
+void	Server::messageToChannel(std::set<int> fdList, std::string message)
+{
+	for (std::set<int>::iterator it = fdList.begin(); it != fdList.end(); it++)
+	{
+		try
+		{
+			getClient(*it).appendSendBuffer(message);
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << RED << "no such fd in server" << RESET << std::endl;
+		}
+	}
+}
+
+void	Server::messageToChannel(std::set<int> fdList, std::string message, int senderFd)
+{
+	for (std::set<int>::iterator it = fdList.begin(); it != fdList.end(); it++)
+	{
+		if (*it == senderFd)
+			continue ;
+		try
+		{
+			getClient(*it).appendSendBuffer(message);
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << RED << "no such fd in server" << RESET << std::endl;
+		}
+	}
 }

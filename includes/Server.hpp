@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/19 13:58:55 by r                ###   ########.fr       */
+/*   Updated: 2024/06/21 16:08:20 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,8 @@ class Server
 		void		run(void);
 		int			newClient(std::vector<struct pollfd>& new_fd);
 		void		receiveData(std::vector<struct pollfd>::iterator &it);
+		void		messageToChannel(std::set<int> fdList, std::string message);
+		void		messageToChannel(std::set<int> fdList, std::string message, int senderFd);
 		void		sendData(std::vector<struct pollfd>::iterator it);
 		void		commands(std::string message, int fd);
 
