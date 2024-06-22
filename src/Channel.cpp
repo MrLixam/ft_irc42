@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/06/19 14:16:25 by r                ###   ########.fr       */
+/*   Updated: 2024/06/22 18:38:33 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,3 @@ Channel	&Channel::operator=(const Channel& rhs)
 	std::cout << "topic_op : " << _topic_op << std::endl;
 	std::cout << "password : " << _password << std::endl;
 }
-/* 
-void	Channel::sendToAll(int senderFd, std::string message)
-{
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
-	{
-		if (it->first != senderFd)
-			it->second.appendSendBuffer(message);
-	}
-}
-
-void	Channel::sendToAll(std::string message)
-{
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
-	{
-		it->second.appendSendBuffer(message);
-	}
-}*/

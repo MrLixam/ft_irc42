@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/19 04:27:25 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/22 17:51:26 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,12 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	if (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
 	{
 		//call parsing here
+		if (sourceClient.getDisconnect() == true)
+		{
+			_clients.erase(it->fd);
+			close(it->fd);
+			it = _fdvec.erase(it);
+		}
 	}
 }
 

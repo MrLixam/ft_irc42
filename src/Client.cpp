@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/18 19:55:25 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/22 17:48:15 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ Client	&Client::operator=(const Client& rhs)
 	std::string	Client::getMessageBuffer(void) const		{ return _messageBuffer; }
 	bool		Client::getPass(void) const					{ return _pass; }
 	std::string Client::getSendBuffer(void) const			{ return _sendBuffer; }
+	bool		Client::getDisconnect(void) const			{ return _toDisconnect; }
  
 // Setters 
 	void	Client::setFd(int fd)							{ _fd = fd; }
@@ -49,6 +50,7 @@ Client	&Client::operator=(const Client& rhs)
 	void	Client::setPass(bool state)						{ _pass = state; }
 	void	Client::setSendBuffer(std::string msg)			{ _sendBuffer = msg; }
 	void	Client::appendSendBuffer(std::string msg)		{ _sendBuffer += msg; }
+	void	Client::setDisconnect(bool state)				{ _toDisconnect = state; }
  
 // Output
 void Client::output(void)

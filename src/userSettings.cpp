@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/06/17 18:09:07 by r                ###   ########.fr       */
+/*   Updated: 2024/06/22 17:49:50 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,5 @@ void	Server::command_quit(struct_msg msg, int fd)
 		it->second.getCl().erase(fd);
 		it->second.getOp().erase(fd);
 	}
-	_clients.erase(fd);
+	getClient(fd).setDisconnect(true);
 }

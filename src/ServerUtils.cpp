@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/21 16:11:14 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/22 18:04:55 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,39 +19,39 @@ std::string getErrorMessage(std::string errorInfo, int errorCode)
 	switch (errorCode)
 	{
 		case 401:
-			return ("\"" + errorInfo + " :No such nick/channel\"");
+			return (errorInfo + " :No such nick/channel");
 		case 403:
-			return ("\"" + errorInfo + " :No such channel\"");
+			return (errorInfo + " :No such channel");
 		case 404:
-			return ("\"" + errorInfo + " :Cannot send to channel\"");
+			return (errorInfo + " :Cannot send to channel");
 		case 407:
-			return ("\"" + errorInfo + " :407 recipients. Message not delivered\"");
+			return (errorInfo + " :407 recipients. Message not delivered");
 		case 412:
-			return ("\":No text to send\"");
+			return (":No text to send");
 		case 421:
-			return ("\"" + errorInfo + " :Unknown command\"");
+			return (errorInfo + " :Unknown command");
 		case 431:
-			return ("\":No nickname given\"");
+			return (":No nickname given");
 		case 432:
-			return ("\"" + errorInfo + " :Erroneous nickname\"");
+			return (errorInfo + " :Erroneous nickname");
 		case 433:
-			return ("\"" + errorInfo + " :Nickname is already in use\"");
+			return (errorInfo + " :Nickname is already in use");
 		case 441:
-			return ("\"" + errorInfo + " :They aren't on that channel\"");
+			return (errorInfo + " :They aren't on that channel");
 		case 442:
-			return ("\"" + errorInfo + " :You're not on that channel\"");
+			return (errorInfo + " :You're not on that channel");
 		case 443:
-			return ("\"" + errorInfo + " :is already on channel\"");
+			return (errorInfo + " :is already on channel");
 		case 451:
-			return ("\":You have not registered\"");
+			return (":You have not registered");
 		case 461:
-			return ("\"" + errorInfo + " :Not enough parameters\"");
+			return (errorInfo + " :Not enough parameters");
 		case 462:
-			return ("\":Unauthorized command (already registered)\"");
+			return (":Unauthorized command (already registered)");
 		case 464:
-			return ("\":Password incorrect\"");
+			return (":Password incorrect");
 		case 465:
-			return ("\":You are banned from this server\"");
+			return (":You are banned from this server");
 		case 466:
 			return ("");
 		default:
