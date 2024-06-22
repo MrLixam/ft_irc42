@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/22 17:51:26 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/22 21:54:13 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <fcntl.h>
 #include <cstring>
+#include <sstream>
 #include <cstdio>
 #include <cerrno>
 
@@ -53,39 +54,51 @@ void Server::init(void)
 	std::cout << YELLOW << "Server Starting ..." << RESET << std::endl;
 	
 	pollfd ServPoll;
-	sockaddr_in addr;
-
-	_servSocketFd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_servSocketFd == -1)
-		throw std::runtime_error("init: socket creation failed: " + std::string(std::strerror(errno)));
-	
+	struct addrinfo hints, *servInfo, *tmp;
 	int opt = 1;
-	if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) //make port reusable in case of restart etc.
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = getprotobyname("TCP")->p_proto;
+	hints.ai_flags = AI_PASSIVE;
+
+	std::stringstream temp;
+	temp << _port;
+
+	int status = getaddrinfo(NULL, temp.str().c_str(), &hints, &servInfo);
+	if (status != 0)
 	{
-		close(_servSocketFd);
-		throw std::runtime_error("init: setting socket option SO_REUSEADDR failed: " + std::string(std::strerror(errno)));
+		throw std::runtime_error("init: getaddrinfo() failed");
 	}
+
+	for (tmp = servInfo; tmp != NULL; tmp = tmp->ai_next)
+	{
+		_servSocketFd = socket(tmp->ai_family, tmp->ai_socktype, tmp->ai_protocol);
+		if (_servSocketFd == -1)
+			continue;
+		if (setsockopt(_servSocketFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) //make port reusable in case of restart etc.
+		{
+			close(_servSocketFd);
+			continue ;
+		}
+		if (bind(_servSocketFd, tmp->ai_addr, tmp->ai_addrlen) == -1) //bind the socket to an interface
+		{
+			close(_servSocketFd);
+			continue ;
+		}
+		break ;
+	}
+	freeaddrinfo(servInfo);
+	if (tmp == NULL)
+	{
+		throw std::runtime_error("failed to find suitable socket");
+	}
+
 	if (fcntl(_servSocketFd, F_SETFL, O_NONBLOCK) == -1) //make actions on port nonblocking
 	{
 		close(_servSocketFd);
 		throw std::runtime_error("init: setting socket option O_NONBLOCK failed: " + std::string(std::strerror(errno)));
-	}
-	
-	memset(&addr, 0, sizeof(addr));
-	
-	addr.sin_family = AF_INET; //IPV4 setup
-	addr.sin_port = htons(_port); //int to actual port byte data conversion
-	addr.sin_addr.s_addr = INADDR_ANY; //accept connexion from any ip adress
-	if (addr.sin_port == 0) //just in case, should not really happen, but port 0 isn't valid
-	{
-		close(_servSocketFd);
-		throw(std::runtime_error("init: invalid port number"));
-	}
-	
-	if (bind(_servSocketFd, (sockaddr *)&addr, sizeof(addr)) == -1) //bind the socket to an interface
-	{
-		close(_servSocketFd);
-		throw std::runtime_error("init: setting bind() on server socket failed: " + std::string(std::strerror(errno)));
 	}
 	if (listen(_servSocketFd, SOMAXCONN) == -1) //set backup queue of the server to max value
 	{
@@ -249,7 +262,7 @@ void	Server::sendData(std::vector<struct pollfd>::iterator it)
 	while (!temp.getSendBuffer().empty())
 	{
 		errno = 0;
-		ssize_t bytes_sent = send(it->fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
+		ssize_t bytes_sent = send(it->fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), MSG_DONTWAIT);
 		if (bytes_sent == -1)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
