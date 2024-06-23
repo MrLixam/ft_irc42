@@ -6,23 +6,16 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/22 21:54:13 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/23 20:39:30 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ircserv.hpp"
 #include "../includes/Server.hpp"
 #include "../includes/colors.hpp"
-#include <arpa/inet.h>
-#include <iostream>
-#include <poll.h>
-#include <sys/socket.h>
-#include <sys/resource.h>
-#include <stdexcept>
 #include <fcntl.h>
 #include <cstring>
 #include <sstream>
-#include <cstdio>
 #include <cerrno>
 
 Server::Server(void)
@@ -116,7 +109,7 @@ void Server::init(void)
 	std::cout << BLUE << "Server port is: " << _port << RESET << std::endl;
 }
 
-int Server::newClient(std::vector<struct pollfd>& new_fd)
+void Server::newClient(std::vector<struct pollfd>& new_fd)
 {
 	struct sockaddr_in clientaddr;
 	socklen_t size = sizeof(struct sockaddr_in);
@@ -125,14 +118,14 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 	if (client_sock == -1)
 	{
 		std::cout << "newClient(): accept() failed" << std::endl;
-		return (-1);
+		return ;
 	}
 	if (_clients.size() == _maxClients)
 	{
 		char full_server[24] = "ERROR :Server is full\r\n";
 		send(client_sock, full_server, 23, 0);
 		close(client_sock);
-		return (-1);
+		return ;
 	}
 	struct pollfd client_pollfd;
 
@@ -143,7 +136,6 @@ int Server::newClient(std::vector<struct pollfd>& new_fd)
 	new_fd.push_back(client_pollfd);
 	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock)));
 	std::cout << BLUE << "Client id: " << client_sock << " connected" << RESET << std::endl;
-	return (0);
 }
 
 std::map<std::string, int> initCmdMap(void)

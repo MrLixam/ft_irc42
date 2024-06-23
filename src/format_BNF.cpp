@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 18:47:25 by r                 #+#    #+#             */
-/*   Updated: 2024/06/22 21:03:49 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/23 20:55:58 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <cerrno>
 #include <iostream>
 #include <sstream>
+#include <netdb.h>
+#include <cstring> 
 #include <cctype>
 
 bool	isspecial(char c)
@@ -71,9 +73,20 @@ bool	format_hostname(std::string name)
 	return (true);
 }
 
-bool	format_hostaddr(std::string addr)
+bool	format_hostaddr(std::string addr) //absolument pas sur de si c'est bon mais ca devrait marcher
 {
-	(void)addr;
+	struct addrinfo hints, *result;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC ;
+	hints.ai_socktype = SOCK_STREAM ;
+	hints.ai_flags = AI_NUMERICHOST;
+
+	int res = getaddrinfo(addr.c_str(), NULL, &hints, &result);
+	if (res != 0) //getaddrinfo a pas pu faire qque chose;
+		return false;
+	if (result == NULL) //addresse invalide
+		return false;
+	freeaddrinfo(result);
 	return (true);
 }
 
