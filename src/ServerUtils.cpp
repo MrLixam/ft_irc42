@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/22 18:04:55 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:11:18 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,13 @@ bool Server::usernameExists(const std::string username, int fd) const
     return false;
 }
 
-Client	Server::getClient(int fd)
+Client&	Server::getClient(int fd)
 {
 	std::map<int, Client>::iterator it = _clients.find(fd);
 	if (it == _clients.end()) //le fd n'existe pas dans le serveur
-		throw std::runtime_error("invalid fd"); //peu importe juste de la gestion d'erreur
-	return (it->second);
+		throw std::runtime_error("getClient: invalid fd"); //peu importe juste de la gestion d'erreur
+	Client& tmp = it->second;
+	return (tmp);
 }
 
 void	Server::messageToChannel(std::set<int> fdList, std::string message)

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/22 17:48:15 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:04:03 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ Client::~Client() {}
 
 Client	&Client::operator=(const Client& rhs)
 {
-	(void)rhs;
+	_fd = rhs._fd;
+	_pass = false;
 	return *this;
 }
 

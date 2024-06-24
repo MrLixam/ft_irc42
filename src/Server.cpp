@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/24 23:09:59 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:13:01 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,8 @@ void Server::newClient(std::vector<struct pollfd>& new_fd)
 	client_pollfd.events = POLLIN | POLLOUT;
 
 	new_fd.push_back(client_pollfd);
-	_clients.insert(std::pair<int, Client>(client_sock, Client(client_sock)));
+	Client new_Client(client_sock);
+	_clients.insert(std::pair<int, Client>(client_sock, new_Client));
 	std::cout << BLUE << "Client id: " << client_sock << " connected" << RESET << std::endl;
 }
 
@@ -155,6 +156,7 @@ std::map<std::string, int> initCmdMap(void)
 	newMap["MODE"] = 8;
 	newMap["QUIT"] = 9;
 	newMap["PART"] = 10;
+	newMap["CAP"] = 11;
 
 	return (newMap);
 }
@@ -196,6 +198,8 @@ void	Server::commands(std::string message, int fd)
 				command_quit(msg, fd); break;
 			case 10:
 				command_part(msg, fd); break;
+			case 11: //CAP command, we don't implement it but it avoids littering output with useless error codes on client connection
+				break;
 			default:
 				throw 421;
 		}
@@ -203,7 +207,7 @@ void	Server::commands(std::string message, int fd)
 	}
 	catch (int e)
 	{
-		std::cout << "send error code " << e << std::endl;
+		std::cout << RED << "commands: send error code " << e << RESET << std::endl;
 	}
 }
 
@@ -231,24 +235,33 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	}
 	message.append(buffer, rdBytes);
 
-	Client sourceClient = getClient(it->fd);
+	Client& sourceClient = getClient(it->fd);
+	std::cout  << "caca" << std::endl;
 	sourceClient.appendMessageBuffer(message);
 
-	if (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
+	while (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
 	{
-		//call parsing here
+		std::string messageBuffer = sourceClient.getMessageBuffer();
+		std::string subMessage = messageBuffer.substr(0, messageBuffer.find("\r\n") + 2);
+		std::cout << subMessage << std::endl;
+		
+		messageBuffer.erase(0, subMessage.length());
+
+		std::cout << sourceClient.getFd() << std::endl;
+		commands(subMessage, it->fd);
 		if (sourceClient.getDisconnect() == true)
 		{
 			_clients.erase(it->fd);
 			close(it->fd);
 			it = _fdvec.erase(it);
 		}
+		sourceClient.setMessageBuffer(messageBuffer);
 	}
 }
 
 void	Server::sendData(std::vector<struct pollfd>::iterator it)
 {
-	Client temp = getClient(it->fd);
+	Client& temp = getClient(it->fd);
 	
 	while (!temp.getSendBuffer().empty())
 	{

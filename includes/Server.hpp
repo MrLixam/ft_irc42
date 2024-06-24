@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/23 20:23:37 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:05:54 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class Server
 		int			getFd(void) const;
 		int			getPort(void) const;
 		std::string	getPwd(void) const;
-		Client		getClient(int fd);
+		Client&		getClient(int fd);
 		
 		//Setters
 		void		setMaxClients(size_t i);

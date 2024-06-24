@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/19 18:48:23 by r                ###   ########.fr       */
+/*   Updated: 2024/06/25 00:06:42 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 
 void	Server::command_join(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw 451;
@@ -91,7 +91,7 @@ void	Server::command_join(struct_msg msg, int fd)
 
 void	Server::command_privmsg(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw 451;
@@ -123,7 +123,7 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 
 void	Server::command_part(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw 451;

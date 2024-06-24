@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/06/22 17:49:50 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:06:25 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void	Server::command_pass(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (msg.params.size() != 1)
 		throw 461;
@@ -29,7 +29,7 @@ void	Server::command_pass(struct_msg msg, int fd)
 
 void	Server::command_nick(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass())
 		throw 451;
@@ -44,7 +44,7 @@ void	Server::command_nick(struct_msg msg, int fd)
 
 void	Server::command_user(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass())
 		throw 451;
@@ -60,7 +60,7 @@ void	Server::command_user(struct_msg msg, int fd)
 
 void	Server::command_quit(struct_msg msg, int fd)
 {
-	Client	myClient = this->getClient(fd);
+	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw 451;
