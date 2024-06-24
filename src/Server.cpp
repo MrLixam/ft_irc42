@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/23 20:39:30 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/24 23:09:59 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <cstring>
 #include <sstream>
 #include <cerrno>
+#include <unistd.h>
 
 Server::Server(void)
 {
@@ -82,12 +83,13 @@ void Server::init(void)
 		}
 		break ;
 	}
-	freeaddrinfo(servInfo);
+
 	if (tmp == NULL)
 	{
+		freeaddrinfo(servInfo);
 		throw std::runtime_error("failed to find suitable socket");
 	}
-
+	freeaddrinfo(servInfo);
 	if (fcntl(_servSocketFd, F_SETFL, O_NONBLOCK) == -1) //make actions on port nonblocking
 	{
 		close(_servSocketFd);
@@ -153,7 +155,6 @@ std::map<std::string, int> initCmdMap(void)
 	newMap["MODE"] = 8;
 	newMap["QUIT"] = 9;
 	newMap["PART"] = 10;
-	newMap["OPER"] = 11;
 
 	return (newMap);
 }
@@ -195,8 +196,6 @@ void	Server::commands(std::string message, int fd)
 				command_quit(msg, fd); break;
 			case 10:
 				command_part(msg, fd); break;
-			case 11:
-				command_oper(msg, fd); break;
 			default:
 				throw 421;
 		}
