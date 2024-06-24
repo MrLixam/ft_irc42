@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/25 00:04:03 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:24:37 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,15 @@ Client::Client(const Client& rhs)
 	*this = rhs;
 }
 
-Client::Client(int newFd) : _fd(newFd), _pass(false) {}
+Client::Client(int newFd) : _fd(newFd), _pass(false), _isRegistered(false){}
 
 Client::~Client() {}
 
 Client	&Client::operator=(const Client& rhs)
 {
 	_fd = rhs._fd;
-	_pass = false;
+	_pass = rhs._pass;
+	_isRegistered = rhs._isRegistered;
 	return *this;
 }
 
@@ -40,7 +41,8 @@ Client	&Client::operator=(const Client& rhs)
 	bool		Client::getPass(void) const					{ return _pass; }
 	std::string Client::getSendBuffer(void) const			{ return _sendBuffer; }
 	bool		Client::getDisconnect(void) const			{ return _toDisconnect; }
- 
+	bool		Client::getRegistered(void) const			{ return _isRegistered; }
+
 // Setters 
 	void	Client::setFd(int fd)							{ _fd = fd; }
 	void	Client::setNickname(std::string nickname)		{ _nickname = nickname; }
@@ -52,7 +54,8 @@ Client	&Client::operator=(const Client& rhs)
 	void	Client::setSendBuffer(std::string msg)			{ _sendBuffer = msg; }
 	void	Client::appendSendBuffer(std::string msg)		{ _sendBuffer += msg; }
 	void	Client::setDisconnect(bool state)				{ _toDisconnect = state; }
- 
+	void	Client::setRegistered(bool state)				{ _isRegistered = state; }
+
 // Output
 void Client::output(void)
 {	std::cout << "fd : " << _fd << std::endl;

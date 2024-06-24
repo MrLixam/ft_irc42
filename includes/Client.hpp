@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/22 17:47:16 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 00:23:19 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class Client
 		std::string _sendBuffer;
 		bool		_pass;
 		bool		_toDisconnect;
+		bool		_isRegistered;
 	public:
 	// Constructor 
 		Client(); 
@@ -44,6 +45,7 @@ class Client
 		bool		getPass(void) const;
 		std::string	getSendBuffer(void) const;
 		bool		getDisconnect(void) const;
+		bool		getRegistered(void) const;
 	
 	// Setters 
 		void		setFd(int fd); 
@@ -56,6 +58,7 @@ class Client
 		void		setSendBuffer(std::string msg);
 		void		appendSendBuffer(std::string msg);
 		void		setDisconnect(bool state);
+		void		setRegistered(bool state);
 	
 	// Output 
 		void		output(void); 

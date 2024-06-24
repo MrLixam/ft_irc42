@@ -6,13 +6,14 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 00:13:01 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 01:01:03 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ircserv.hpp"
 #include "../includes/Server.hpp"
 #include "../includes/colors.hpp"
+#include "../includes/replies.hpp"
 #include <fcntl.h>
 #include <cstring>
 #include <sstream>
@@ -209,6 +210,13 @@ void	Server::commands(std::string message, int fd)
 	{
 		std::cout << RED << "commands: send error code " << e << RESET << std::endl;
 	}
+	Client& tmp = getClient(fd);
+
+	if (!tmp.getRegistered() && tmp.getPass() && !tmp.getNickname().empty() && !tmp.getRealname().empty())
+	{
+		tmp.setRegistered(true);
+		tmp.appendSendBuffer(RPL_WELCOME(tmp.getNickname(), user_id(tmp.getNickname(), tmp.getUsername())));
+	}
 }
 
 void Server::receiveData(std::vector<struct pollfd>::iterator &it)
@@ -271,10 +279,14 @@ void	Server::sendData(std::vector<struct pollfd>::iterator it)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				return;
+			if (bytes_sent == 0)
+				break ;
 			throw std::runtime_error("sendData: send() failed");
 		}
-		temp.getSendBuffer().erase(0, bytes_sent);
-    }
+		std::string sendBuffer = temp.getSendBuffer();
+		sendBuffer.erase(0, bytes_sent);
+		temp.setSendBuffer(sendBuffer);
+	}
 }
 
 void Server::run(void)
