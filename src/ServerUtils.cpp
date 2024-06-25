@@ -110,3 +110,16 @@ void	Server::messageToChannel(std::set<int> fdList, std::string message, int sen
 		}
 	}
 }
+
+
+void	Server::messageToClient(int fd, std::string message)
+{
+	try
+	{
+		getClient(fd).appendSendBuffer(message);
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << RED << "no such fd in server" << RESET << std::endl;
+	}
+}
