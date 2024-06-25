@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/06/21 16:00:52 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 13:30:25 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ class Channel
 	public:
 	// Constructor 
 		Channel(); 
+		Channel(int	fd); 
+		Channel(int	fd, std::string key); 
 		Channel(const Channel &rhs);
 		~Channel(); 
 		Channel& operator=(const Channel &rhs); 

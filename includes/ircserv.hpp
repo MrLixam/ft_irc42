@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/19 17:25:58 by r                ###   ########.fr       */
+/*   Updated: 2024/06/25 16:15:27 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ typedef struct structured_message
 bool		isspecial(char c);
 void		format_nickname(std::string nick);
 bool		format_channel(std::string chan);
+bool		format_key(std::string key);
+bool		msgto_nickname(std::string nick);
 struct_msg	structuring_message(std::string message);
 int			parseArgs(char **argv);
 std::string getErrorMessage(std::string errorInfo = "", int errorCode = -1);

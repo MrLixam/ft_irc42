@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 00:06:42 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 16:15:47 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,29 @@ void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 	it->second.getOp().erase(fd);
 }
 
+void	Server::create_chan(std::string chan, int fd, std::string key = "")
+{
+	if (!format_channel(chan))
+		throw 403;
+	if (key.empty())
+		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd)));
+	else
+	{
+		if (!format_key(key))
+			throw "bad key format";
+		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd, key)));
+	}
+}
+
 void	Server::join_chan(std::string chan, int fd, std::string key = "")
 {
 	it_chan it;
 	it = this->_channels.find(chan);
 	if (it == this->_channels.end())
-		throw 403;
+	{
+		create_chan(chan, fd, key);
+		return ;
+	}
 	if (it->second.getLimit() > 0 && it->second.getLimit() >= it->second.getCl().size())
 		throw 471;
 	if (it->second.getInvite())
@@ -96,19 +113,27 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw 451;
 	if (msg.params.size() < 2)
-        throw 431;
+        throw 412;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::stringstream	ss(*ms);
 	std::string 		msgto;
+	ms++;
 	while (std::getline(ss, msgto, ','))
-	{/*
+	{
 		try
 		{
-			if (msgto_channel(msgto))
-				return ;//send to channel
-			else if (msgto_user(msgto))
-				return ;//send to user
-			else if (msgto_user(msgto))
+			if (format_channel(msgto))
+			{
+
+				it_chan it;
+				it = this->_channels.find(msgto);
+				if (it == this->_channels.end())
+					throw 411;
+				messageToChannel(it->second.getCl(), *ms);
+			}
+	//		else if (msgto_user(msgto))
+	//			return ;//send to user
+			else if (msgto_nickname(msgto))
 				return ;//send to nickname
 			else
 				throw 411;
@@ -116,7 +141,7 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 		catch (int e)
 		{
 			std::cout << "send error code " << e << std::endl;
-		}*/
+		}
 	}
 	//check nickname channel name and username
 }

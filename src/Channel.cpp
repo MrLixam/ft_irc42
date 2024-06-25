@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/06/22 18:38:33 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 14:03:04 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,23 @@
 #include <sys/socket.h>
 // Constructor initializes attributes to 0 by default 
 
-Channel::Channel() : _topic(0), _invite(0), _topic_op(0), _password(0), _limit(0)
+Channel::Channel() : _invite(0), _topic_op(0), _limit(0)
 {
 	std::cout << "Channel constructor called" << std::endl;
+}
+
+Channel::Channel(int fd) : _invite(0), _topic_op(0), _limit(0)
+{
+	std::cout << "Channel constructor called" << std::endl;
+	this->_clients.insert(fd);
+	this->_operators.insert(fd);
+}
+
+Channel::Channel(int fd, std::string key) : _invite(0), _topic_op(0), _password(key), _limit(0)
+{
+	std::cout << "Channel constructor called" << std::endl;
+	this->_clients.insert(fd);
+	this->_operators.insert(fd);
 }
 
 Channel::Channel(const Channel& rhs)
