@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 23:04:32 by r                ###   ########.fr       */
+/*   Updated: 2024/06/25 23:40:48 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,12 @@ class Server
 		void    	leave_chan(std::string chan, int fd, std::string msg);
 		void		create_chan(std::string chan, int fd, std::string key);
 		void    	join_chan(std::string chan, int fd, std::string key);
+		void		command_topic(struct_msg msg, int fd);
 		
 			//operatorCommands.cpp
 		void		command_kick(struct_msg msg, int fd);
 		void		command_invite(struct_msg msg, int fd);
-		void		command_topic(struct_msg msg, int fd);
+		void		command_topic_op(struct_msg msg, int fd);
 		void		command_mode(struct_msg msg, int fd);
 		void		command_oper(struct_msg msg, int fd);
 

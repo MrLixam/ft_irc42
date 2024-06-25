@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 23:04:45 by r                ###   ########.fr       */
+/*   Updated: 2024/06/26 00:14:28 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 
 void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 {
-	it_chan it;
-	it = this->_channels.find(chan);
+	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
 		throw 403;
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
@@ -47,8 +46,7 @@ void	Server::create_chan(std::string chan, int fd, std::string key = "")
 
 void	Server::join_chan(std::string chan, int fd, std::string key = "")
 {
-	it_chan it;
-	it = this->_channels.find(chan);
+	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
 	{
 		create_chan(chan, fd, key);
@@ -124,9 +122,7 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 		{
 			if (format_channel(msgto))
 			{
-
-				it_chan it;
-				it = this->_channels.find(msgto);
+				it_chan it = this->_channels.find(msgto);
 				if (it == this->_channels.end())
 					throw 411;
 				messageToChannel(it->second.getCl(), *ms);
@@ -174,5 +170,32 @@ void	Server::command_part(struct_msg msg, int fd)
 		{
 			std::cout << "send error code " << e << std::endl;
 		}
+	}
+}
+
+void Server::command_topic(struct_msg msg, int fd)
+{
+	Client&	myClient = this->getClient(fd);
+
+	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
+		throw 451;
+	if (msg.params.size() < 1)
+        throw 431;
+	std::list<std::string>::iterator	ms = msg.params.begin(); 
+	it_chan it = this->_channels.find(*ms);
+	if (it == this->_channels.end())
+		throw 442;
+	if (msg.params.size() == 1)
+	{
+		if (it->second.getTopic().empty())
+			messageToClient(fd, *ms + " :No topic is set");
+		else
+			messageToClient(fd, *ms + " :" + it->second.getTopic());
+	}
+	if (msg.params.size() > 1)
+	{
+		if (it->second.getTopic_op() && it->second.getOp().find(fd) == it->second.getOp().end())
+			throw 482;
+		it->second.setTopic(*++ms);
 	}
 }
