@@ -72,6 +72,7 @@ class Server
 		void		messageToChannel(std::set<int> fdList, std::string message, int senderFd);
 		void		sendData(std::vector<struct pollfd>::iterator it);
 		void		commands(std::string message, int fd);
+		void		messageToClient(int fd, std::string message);
 
 		//Command function
 		
