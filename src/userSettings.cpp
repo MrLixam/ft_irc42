@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/06/25 00:06:25 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 23:05:50 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	Server::command_nick(struct_msg msg, int fd)
 		throw 431;
 	std::string nick = msg.params.front();
 	format_nickname(nick);
-	if (usernameExists(nick, fd))
+	if (usernameExists(nick, fd) > 0)
 		throw 433;
 	myClient.setNickname(nick);
 }

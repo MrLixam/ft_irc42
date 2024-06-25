@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 14:04:27 by r                ###   ########.fr       */
+/*   Updated: 2024/06/25 23:04:32 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,6 @@ class Server
 		void		command_oper(struct_msg msg, int fd);
 
 		//Utils
-		bool		usernameExists(const std::string username, int fd) const;
+		int			usernameExists(const std::string username, int fd) const;
 };
 #endif

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 16:15:47 by r                ###   ########.fr       */
+/*   Updated: 2024/06/25 23:04:45 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	Server::command_join(struct_msg msg, int fd)
 		}
 		catch (int e)
 		{
-			std::cout << "send error code " << e << std::endl;
+			messageToClient(fd, getErrorMessage(*ms, e));
 		}
 	}
 }
@@ -134,16 +134,20 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 	//		else if (msgto_user(msgto))
 	//			return ;//send to user
 			else if (msgto_nickname(msgto))
-				return ;//send to nickname
+			{
+				int dest = usernameExists(msgto, -1);
+				if (dest < 0)
+					throw 401;
+				messageToClient(dest, *ms);
+			}
 			else
 				throw 411;
 		}
 		catch (int e)
 		{
-			std::cout << "send error code " << e << std::endl;
+			messageToClient(fd, getErrorMessage(msgto, e));
 		}
 	}
-	//check nickname channel name and username
 }
 
 void	Server::command_part(struct_msg msg, int fd)

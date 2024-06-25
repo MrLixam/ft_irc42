@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/25 00:11:18 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/25 23:04:23 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,15 @@ std::string getErrorMessage(std::string errorInfo, int errorCode)
 	}
 }
 
-bool Server::usernameExists(const std::string username, int fd) const
+int Server::usernameExists(const std::string username, int fd) const
 {
     for (std::map<int, Client>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second.getFd() != fd)
 			if (it->second.getUsername() == username)
-				return true;
+				return (it->second.getFd());
     }
-    return false;
+    return (-1);
 }
 
 Client&	Server::getClient(int fd)
