@@ -123,3 +123,15 @@ void	Server::messageToClient(int fd, std::string message)
 		std::cerr << RED << "no such fd in server" << RESET << std::endl;
 	}
 }
+
+std::string Server::clientList(std::set<int>& fdList)
+{
+	std::string ret;
+	for (std::set<int>::iterator it = fdList.begin(); it != fdList.end(); it++)
+	{
+		ret += getClient(*it).getNickname();
+		ret += " ";
+	}
+	ret.pop_back();
+	return (ret);
+}

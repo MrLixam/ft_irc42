@@ -100,5 +100,6 @@ class Server
 
 		//Utils
 		int			usernameExists(const std::string username, int fd) const;
+		std::string clientList(std::set<int>& fdList);
 };
 #endif
