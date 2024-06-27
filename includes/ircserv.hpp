@@ -6,13 +6,14 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/25 16:15:27 by r                ###   ########.fr       */
+/*   Updated: 2024/06/27 15:18:23 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IRCSERV_HPP
 #define IRCSERV_HPP
 
+#include <iostream>
 #include <list>
 #include <string>
 
@@ -52,5 +53,17 @@ bool		msgto_nickname(std::string nick);
 struct_msg	structuring_message(std::string message);
 int			parseArgs(char **argv);
 std::string getErrorMessage(std::string errorInfo = "", int errorCode = -1);
+
+class commandException : public std::exception
+{
+	commandException(int errorCode, std::string errorMessage): _errorCode(errorCode), _errorMessage(errorMessage) {}
+	~commandException() throw() {};
+	virtual const char *	what() const throw()
+	{
+		return ("sent an error code");
+	}
+	int						_errorCode;
+	std::string				_errorMessage;
+};
 
 #endif

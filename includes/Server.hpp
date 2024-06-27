@@ -6,13 +6,14 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/27 14:36:26 by r                ###   ########.fr       */
+/*   Updated: 2024/06/27 15:20:44 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "ircserv.hpp"
 #include <map>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -22,7 +23,6 @@
 #include <sys/socket.h>
 #include "Client.hpp"
 #include "Channel.hpp"
-#include "ircserv.hpp"
 #include <vector>
 #include <iostream>
 #include <sstream>
