@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 23:40:48 by r                ###   ########.fr       */
+/*   Updated: 2024/06/27 14:36:26 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 #include "Channel.hpp"
 #include "ircserv.hpp"
 #include <vector>
+#include <iostream>
+#include <sstream>
+#include <cstdlib>
 
 extern bool server_signal;
 
@@ -92,14 +95,14 @@ class Server
 		void		command_topic(struct_msg msg, int fd);
 		
 			//operatorCommands.cpp
-		void		command_kick(struct_msg msg, int fd);
-		void		command_invite(struct_msg msg, int fd);
-		void		command_topic_op(struct_msg msg, int fd);
-		void		command_mode(struct_msg msg, int fd);
-		void		command_oper(struct_msg msg, int fd);
+		void		kick_users(it_chan it, std::string users, std::string comment);
+        void		command_kick(struct_msg msg, int fd);
+        void		command_invite(struct_msg msg, int fd);
+        void		modes_switch(it_chan it, std::string modes, std::string param);
+        void		command_mode(struct_msg msg, int fd);
 
 		//Utils
 		int			usernameExists(const std::string username, int fd) const;
-		std::string clientList(std::set<int>& fdList);
+		std::string	clientList(std::set<int>& fdList);
 };
 #endif

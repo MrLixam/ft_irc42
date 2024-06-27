@@ -6,13 +6,11 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/26 00:14:28 by r                ###   ########.fr       */
+/*   Updated: 2024/06/27 12:03:20 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
-#include <iostream>
-#include <sstream>
 
 void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 {
@@ -51,6 +49,7 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	{
 		create_chan(chan, fd, key);
 		it = this->_channels.find(chan);
+		it->second.getOp().insert(fd);
 	}
 	if (it->second.getLimit() > 0 && it->second.getLimit() >= it->second.getCl().size())
 		throw 471;
