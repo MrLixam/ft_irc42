@@ -132,6 +132,6 @@ std::string Server::clientList(std::set<int>& fdList)
 		ret += getClient(*it).getNickname();
 		ret += " ";
 	}
-	ret.pop_back();
+	ret.erase(ret.end() - 1);
 	return (ret);
 }
