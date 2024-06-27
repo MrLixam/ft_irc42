@@ -50,7 +50,7 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	if (it == this->_channels.end())
 	{
 		create_chan(chan, fd, key);
-		return ;
+		it = this->_channels.find(chan);
 	}
 	if (it->second.getLimit() > 0 && it->second.getLimit() >= it->second.getCl().size())
 		throw 471;

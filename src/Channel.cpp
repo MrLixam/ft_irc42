@@ -51,8 +51,8 @@ Channel	&Channel::operator=(const Channel& rhs)
 }
 
 // Getters 
-	std::set<int>		Channel::getCl(void) const					{ return _clients; }
-	std::set<int>		Channel::getOp(void) const					{ return _operators; }
+	std::set<int>&		Channel::getCl(void)						{ return _clients; }
+	std::set<int>&		Channel::getOp(void)						{ return _operators; }
 	std::string			Channel::getTopic(void) const				{ return _topic; }
 	bool				Channel::getInvite(void) const				{ return _invite; }
 	bool				Channel::getTopic_op(void) const			{ return _topic_op; }

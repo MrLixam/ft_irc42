@@ -38,8 +38,8 @@ class Channel
 		Channel& operator=(const Channel &rhs); 
 
 	// Getters 
-		std::set<int>	getCl(void) const;
-		std::set<int>	getOp(void) const;
+		std::set<int>&	getCl(void);
+		std::set<int>&	getOp(void);
 		std::string		getTopic(void) const;
 		bool 			getInvite(void) const;
 		bool 			getTopic_op(void) const;
