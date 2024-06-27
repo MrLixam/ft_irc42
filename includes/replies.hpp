@@ -16,5 +16,9 @@
 
 #define user_id(nickname, username) (":" + nickname + "!" + username + "@localhost")
 #define RPL_WELCOME(nickname, user_id) (":42IRC 001 " + nickname + " :Welcome to the Internet Relay Network " + user_id + "\r\n")
+#define RPL_TOPIC(channel, topic) (":42IRC 332 " + channel + " :" + topic + "\r\n")
+#define RPL_NAMREPLY(channel, nickname, nick_list) (":42IRC 353 " + nickname + " = " + test + " :" + nick_list + "\r\n")
+#define RPL_ENDOFNAMES(channel) (":42IRC 366 " + channel + " :End of NAMES list\r\n")
+#define RPL_INVITING(nickname, invited_nick, channel) (":42IRC 341 " + nickname + " " + invited_nick + " " + channel + "\r\n")
 
 #endif
