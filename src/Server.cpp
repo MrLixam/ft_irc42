@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/25 01:01:03 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 08:53:31 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,7 +270,9 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 void	Server::sendData(std::vector<struct pollfd>::iterator it)
 {
 	Client& temp = getClient(it->fd);
-	
+	if (temp.getSendBuffer().empty())
+		return ;
+	std::string buff = temp.getSendBuffer();
 	while (!temp.getSendBuffer().empty())
 	{
 		errno = 0;
@@ -287,6 +289,7 @@ void	Server::sendData(std::vector<struct pollfd>::iterator it)
 		sendBuffer.erase(0, bytes_sent);
 		temp.setSendBuffer(sendBuffer);
 	}
+	std::cout << "Message sent to client" << it->fd << ">  " << buff << std::endl;
 }
 
 void Server::run(void)

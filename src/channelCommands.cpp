@@ -6,11 +6,12 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/27 12:03:20 by r                ###   ########.fr       */
+/*   Updated: 2024/06/29 09:09:08 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+#include "../includes/replies.hpp"
 
 void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 {
@@ -20,11 +21,13 @@ void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
 		throw 442;
 	(void)msg;
-	/*	if (msg.empty())
-		//send part
+	Client& tmp = getClient(fd);
+	std::string userId = user_id(tmp.getNickname(), tmp.getUsername());
+	if (msg.empty())
+		messageToChannel(it->second.getCl(), PART_RPL_NOMSG(userId, it->first));
 	else
-		//send part with msg
-*/	it->second.getCl().erase(fd);
+		messageToChannel(it->second.getCl(), PART_RPL(userId, it->first, msg));
+	it->second.getCl().erase(fd);
 	it->second.getOp().erase(fd);
 }
 
@@ -62,6 +65,16 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	if (!key.empty() && it->second.getPassword() != key)
 		throw 464;
 	it->second.getCl().insert(fd);
+	
+	Client& tmp = getClient(fd);
+	
+	messageToClient(fd, JOIN_RPL(user_id(tmp.getNickname(), tmp.getUsername()), it->first));
+	if (!it->second.getTopic().empty())
+		messageToClient(fd, RPL_TOPIC(it->first, it->second.getTopic()));
+	messageToClient(fd, RPL_NAMREPLY(it->first, tmp.getNickname(), clientList(it->second.getCl())));
+	messageToClient(fd, RPL_ENDOFNAMES(it->first));
+	
+	//send a JOIN Message back to client as confirmation;
 	//send 332    RPL_TOPIC and 353    RPL_NAMREPLY;
 }
 
