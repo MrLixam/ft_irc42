@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:31 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/19 04:28:40 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 10:16:17 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <sys/resource.h>
 #include "../includes/colors.hpp"
+#include <ctime>
 
 bool server_signal = false;
 
@@ -85,7 +86,13 @@ int main(int argc, char **argv)
 		std::cout << RED << "Not enough file descriptors available to process" << RESET << std::endl;
 		return (1);
 	}
-	Server irc_serv(strtol(argv[1], NULL, 10), argv[2]);
+	time_t tmp_time;
+
+	time(&tmp_time);
+	struct tm *timeinfo;
+
+	timeinfo = localtime(&tmp_time);
+	Server irc_serv(strtol(argv[1], NULL, 10), argv[2], timeinfo);
 	irc_serv.setMaxClients((size_t)maxFd);
 	try
 	{

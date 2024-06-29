@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/29 08:53:31 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:21:55 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 #include "../includes/colors.hpp"
 #include "../includes/replies.hpp"
 #include <fcntl.h>
+#include <ctime>
 #include <cstring>
 #include <sstream>
 #include <cerrno>
+#include <cstdio>
 #include <unistd.h>
 
 Server::Server(void)
@@ -26,10 +28,17 @@ Server::Server(void)
 	_password = "";
 }
 
-Server::Server(int port, std::string password)
+Server::Server(int port, std::string password, struct tm * timeinfo)
 {
 	_port = port;
 	_password = password;
+	
+	char buffer[80];
+
+	strftime(buffer, sizeof(buffer), "%d/%m/%Y %H:%M:%S", timeinfo);
+
+	std::string tmp(buffer);
+	_creationDate = tmp;
 	std::cout << "Server initialised !" << std::endl;
 }
 
@@ -130,6 +139,11 @@ void Server::newClient(std::vector<struct pollfd>& new_fd)
 		close(client_sock);
 		return ;
 	}
+	if (fcntl(client_sock, F_SETFL, O_NONBLOCK) == -1)
+	{
+		close(client_sock);
+		throw std::runtime_error("newClient: setting socket option O_NONBLOCK failed");
+	}
 	struct pollfd client_pollfd;
 
 	client_pollfd.revents = 0;
@@ -137,8 +151,8 @@ void Server::newClient(std::vector<struct pollfd>& new_fd)
 	client_pollfd.events = POLLIN | POLLOUT;
 
 	new_fd.push_back(client_pollfd);
-	Client new_Client(client_sock);
-	_clients.insert(std::pair<int, Client>(client_sock, new_Client));
+	Client newClient(client_sock);
+	_clients[client_sock] = newClient;
 	std::cout << BLUE << "Client id: " << client_sock << " connected" << RESET << std::endl;
 }
 
@@ -158,6 +172,7 @@ std::map<std::string, int> initCmdMap(void)
 	newMap["QUIT"] = 9;
 	newMap["PART"] = 10;
 	newMap["CAP"] = 11;
+	newMap["PING"] = 12;
 
 	return (newMap);
 }
@@ -201,6 +216,8 @@ void	Server::commands(std::string message, int fd)
 				command_part(msg, fd); break;
 			case 11: //CAP command, we don't implement it but it avoids littering output with useless error codes on client connection
 				break;
+			case 12:
+				command_ping(msg, fd); break;
 			default:
 				throw 421;
 		}
@@ -214,8 +231,13 @@ void	Server::commands(std::string message, int fd)
 
 	if (!tmp.getRegistered() && tmp.getPass() && !tmp.getNickname().empty() && !tmp.getRealname().empty())
 	{
+		messageToClient(tmp.getFd(), RPL_WELCOME(tmp.getNickname(), user_id(tmp.getNickname(), tmp.getUsername())));
+		messageToClient(tmp.getFd(), RPL_YOURHOST(tmp.getNickname(), "42IRC", "1.0"));
+		messageToClient(tmp.getFd(), RPL_CREATED(tmp.getNickname(), _creationDate));
+		messageToClient(tmp.getFd(), RPL_MYINFO(tmp.getNickname(), "42IRC", "1.0", ".", "it klo"));
+		messageToClient(tmp.getFd(), RPL_ISUPPORT(tmp.getNickname(), "CHANTYPES=&# MODES=3"));
+		messageOfTheDay("Welcome to 42IRC", tmp);
 		tmp.setRegistered(true);
-		tmp.appendSendBuffer(RPL_WELCOME(tmp.getNickname(), user_id(tmp.getNickname(), tmp.getUsername())));
 	}
 }
 
@@ -231,38 +253,30 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
+		perror("receiveData: recv() failed");
 		throw std::runtime_error("receiveData: recv() failed");
 	}
 	if (rdBytes == 0)
 	{
-		std::cout << BLUE << "Client id: " << it->fd << " disconnected" << RESET << std::endl;
 		_clients.erase(it->fd);
 		close(it->fd);
-		it = _fdvec.erase(it);
+		_fdvec.erase(it);
+		it = _fdvec.end();
+		std::cout << BLUE << "Client id: " << it->fd << " disconnected by sending 0" << RESET << std::endl;
 		return;
 	}
 	message.append(buffer, rdBytes);
 
 	Client& sourceClient = getClient(it->fd);
-	std::cout  << "caca" << std::endl;
 	sourceClient.appendMessageBuffer(message);
 
 	while (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
 	{
 		std::string messageBuffer = sourceClient.getMessageBuffer();
 		std::string subMessage = messageBuffer.substr(0, messageBuffer.find("\r\n") + 2);
-		std::cout << subMessage << std::endl;
 		
 		messageBuffer.erase(0, subMessage.length());
-
-		std::cout << sourceClient.getFd() << std::endl;
 		commands(subMessage, it->fd);
-		if (sourceClient.getDisconnect() == true)
-		{
-			_clients.erase(it->fd);
-			close(it->fd);
-			it = _fdvec.erase(it);
-		}
 		sourceClient.setMessageBuffer(messageBuffer);
 	}
 }
@@ -276,7 +290,7 @@ void	Server::sendData(std::vector<struct pollfd>::iterator it)
 	while (!temp.getSendBuffer().empty())
 	{
 		errno = 0;
-		ssize_t bytes_sent = send(it->fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), MSG_DONTWAIT);
+		ssize_t bytes_sent = send(it->fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
 		if (bytes_sent == -1)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -289,7 +303,15 @@ void	Server::sendData(std::vector<struct pollfd>::iterator it)
 		sendBuffer.erase(0, bytes_sent);
 		temp.setSendBuffer(sendBuffer);
 	}
-	std::cout << "Message sent to client" << it->fd << ">  " << buff << std::endl;
+	std::cout << "Message sent to client " << it->fd << ">  " << buff << std::endl;
+	if (temp.getDisconnect() == true)
+	{
+		_clients.erase(it->fd);
+		close(it->fd);
+		_fdvec.erase(it);
+		it = _fdvec.end();
+		std::cout << BLUE << "Client id: " << it->fd << " disconnected" << RESET << std::endl;
+	}
 }
 
 void Server::run(void)
@@ -319,6 +341,8 @@ void Server::run(void)
 			else if (it->revents & POLLOUT)
 			{
 				sendData(it);
+				if (it == _fdvec.end())
+					break;
 			}
 		}
 		_fdvec.insert(_fdvec.end(), new_fds.begin(), new_fds.end());

@@ -6,20 +6,21 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/29 09:09:08 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 14:04:04 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+#include "../includes/ircserv.hpp"
 #include "../includes/replies.hpp"
 
 void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 {
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
-		throw 403;
+		throw ERR_NOSUCHCHANNEL;
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
-		throw 442;
+		throw ERR_NOTONCHANNEL;
 	(void)msg;
 	Client& tmp = getClient(fd);
 	std::string userId = user_id(tmp.getNickname(), tmp.getUsername());
@@ -34,7 +35,7 @@ void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 void	Server::create_chan(std::string chan, int fd, std::string key = "")
 {
 	if (!format_channel(chan))
-		throw 403;
+		throw ERR_NOSUCHCHANNEL;
 	if (key.empty())
 		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd)));
 	else
@@ -55,15 +56,15 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 		it->second.getOp().insert(fd);
 	}
 	if (it->second.getLimit() > 0 && it->second.getLimit() >= it->second.getCl().size())
-		throw 471;
+		throw ERR_CHANNELISFULL;
 	if (it->second.getInvite())
-		throw 473;
+		throw ERR_INVITEONLYCHAN;
 	if (it->second.getCl().find(fd) != it->second.getCl().end())
 		throw "already on channel";
 	if (!it->second.getPassword().empty() && key.empty())
-		throw 464;
+		throw ERR_PASSWDMISMATCH;
 	if (!key.empty() && it->second.getPassword() != key)
-		throw 464;
+		throw ERR_PASSWDMISMATCH;
 	it->second.getCl().insert(fd);
 	
 	Client& tmp = getClient(fd);
@@ -83,9 +84,9 @@ void	Server::command_join(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 1)
-        throw 431;
+        throw ERR_NEEDMOREPARAMS;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	if (*ms == "0")
 	{
@@ -109,9 +110,9 @@ void	Server::command_join(struct_msg msg, int fd)
 			else
 				join_chan(token, fd);
 		}
-		catch (int e)
+		catch (commandException& e)
 		{
-			messageToClient(fd, getErrorMessage(*ms, e));
+			std::cout << "send error code: " << e._errorCode << std::endl;
 		}
 	}
 }
@@ -121,7 +122,7 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 2)
         throw 412;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
@@ -145,15 +146,15 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 			{
 				int dest = usernameExists(msgto, -1);
 				if (dest < 0)
-					throw 401;
+					throw ERR_NOSUCHNICK;
 				messageToClient(dest, *ms);
 			}
 			else
-				throw 411;
+				throw ERR_NORECIPIENT;
 		}
-		catch (int e)
+		catch (commandException& e)
 		{
-			messageToClient(fd, getErrorMessage(msgto, e));
+			std::cout << "send error code: " << e._errorCode << std::endl;
 		}
 	}
 }
@@ -163,9 +164,9 @@ void	Server::command_part(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 1)
-        throw 431;
+        throw ERR_NEEDMOREPARAMS;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::stringstream	ss(*ms);
 	std::string 		token;
@@ -190,13 +191,13 @@ void Server::command_topic(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 1)
-        throw 431;
+        throw ERR_NEEDMOREPARAMS;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	it_chan it = this->_channels.find(*ms);
 	if (it == this->_channels.end())
-		throw 442;
+		throw ERR_NOTONCHANNEL;
 	if (msg.params.size() == 1)
 	{
 		if (it->second.getTopic().empty())
@@ -207,7 +208,7 @@ void Server::command_topic(struct_msg msg, int fd)
 	if (msg.params.size() > 1)
 	{
 		if (it->second.getTopic_op() && it->second.getOp().find(fd) == it->second.getOp().end())
-			throw 482;
+			throw ERR_CHANOPRIVSNEEDED;
 		it->second.setTopic(*++ms);
 	}
 }

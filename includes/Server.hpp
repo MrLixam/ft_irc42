@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/27 15:20:44 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:14:24 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <ctime>
 #include <cstdlib>
 
 extern bool server_signal;
@@ -46,11 +47,12 @@ class Server
 		struct addrinfo					_servRes;
 		int								_servSocketFd;
 		size_t							_maxClients;
+		std::string						_creationDate;
 			
 	public:		
 		//Constructors
 		Server(void);
-		Server(int port, std::string password);
+		Server(int port, std::string password, struct tm * timeinfo);
 		~Server(void);
 
 		//Getters
@@ -58,6 +60,7 @@ class Server
 		int			getPort(void) const;
 		std::string	getPwd(void) const;
 		Client&		getClient(int fd);
+
 		
 		//Setters
 		void		setMaxClients(size_t i);
@@ -76,6 +79,7 @@ class Server
 		void		sendData(std::vector<struct pollfd>::iterator it);
 		void		commands(std::string message, int fd);
 		void		messageToClient(int fd, std::string message);
+		void		messageOfTheDay(std::string message, Client& client);
 
 		//Command function
 		
@@ -84,6 +88,7 @@ class Server
 		void		command_nick(struct_msg msg, int fd);
 		void		command_user(struct_msg msg, int fd);
 		void		command_quit(struct_msg msg, int fd);
+		void		command_ping(struct_msg msg, int fd);
 		
 			//channelCommands.cpp
 		void		command_join(struct_msg msg, int fd);

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/27 14:32:42 by r                ###   ########.fr       */
+/*   Updated: 2024/06/29 14:04:50 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void	Server::kick_users(it_chan it, std::string users, std::string comment = "")
 	{
 		int dest = usernameExists(token, -1);
 		if (dest < 0)
-			throw 401;
+			throw ERR_NOSUCHNICK;
 		if (it->second.getCl().find(dest) == it->second.getCl().end())
-			throw 441;
+			throw ERR_USERNOTINCHANNEL;
 		it->second.getCl().erase(dest);
 		it->second.getOp().erase(dest);
 		if (comment.empty())
@@ -37,9 +37,9 @@ void	Server::command_kick(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 2)
-        throw 461;
+        throw ERR_NEEDMOREPARAMS;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::stringstream	chan(*ms);
 	std::string 		token;
@@ -54,16 +54,16 @@ void	Server::command_kick(struct_msg msg, int fd)
 		{
 			it_chan it = this->_channels.find(token);
 			if (it == this->_channels.end())
-				throw 403;
+				throw ERR_NOSUCHCHANNEL;
 			if (it->second.getCl().find(fd) == it->second.getCl().end())
-				throw 442;
+				throw ERR_NOTONCHANNEL;
 			if (it->second.getOp().find(fd) == it->second.getOp().end())
-				throw 482;
+				throw ERR_CHANOPRIVSNEEDED;
 			kick_users(it, users, comment);
 		}
-		catch (int e)
+		catch (commandException& e)
 		{
-			messageToClient(fd, getErrorMessage(*ms, e));
+			std::cout << "send error code " << e._errorCode << std::endl;
 		}
 	}
 }
@@ -73,15 +73,15 @@ void	Server::command_invite(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 2)
-        throw 461;
+        throw ERR_NEEDMOREPARAMS;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	nick = (*ms).substr();
 	std::string	chan = (*(++ms)).substr();
 	int dest = usernameExists(nick, -1);
 	if (dest < 0)
-		throw 401;
+		throw ERR_NOSUCHNICK;
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
 	{
@@ -89,11 +89,11 @@ void	Server::command_invite(struct_msg msg, int fd)
 		it = this->_channels.find(chan);
 	}
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
-		throw 441;
+		throw ERR_USERNOTINCHANNEL;
 	if (it->second.getInvite() && it->second.getOp().find(fd) == it->second.getOp().end())
-		throw 482;
+		throw ERR_CHANOPRIVSNEEDED;
 	if (it->second.getCl().find(dest) != it->second.getCl().end())
-		throw 443;
+		throw ERR_USERONCHANNEL;
 	it->second.getCl().insert(fd);
 	//RPL_invinting
 }
@@ -101,7 +101,7 @@ void	Server::command_invite(struct_msg msg, int fd)
 void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")
 {
 	if (modes[0] != '+' && modes[0] != '-')
-		throw 472;
+		throw ERR_UNKNOWNMODE;
 	for (int i = 1; modes[i]; i++)
 	{
 		if (modes[i] == 'i')
@@ -113,19 +113,19 @@ void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")
 			if (modes[0] == '-')
 				it->second.setPassword(0);
 			else if (param.empty() || !format_key(param))
-				throw 461;
+				throw ERR_NEEDMOREPARAMS;
 			else
 				it->second.setPassword(param);
 		}
 		else if (modes[i] == 'o')
 		{
 			if (param.empty())
-				throw 461;
+				throw ERR_NEEDMOREPARAMS;
 			int user = usernameExists(param, -1);
 			if (user < 0)
-				throw 461;
+				throw ERR_NEEDMOREPARAMS;
 			if (it->second.getCl().find(user) == it->second.getCl().end())
-				throw 441;
+				throw ERR_USERNOTINCHANNEL;
 			else if (modes[0] == '-')
 				it->second.getOp().erase(user);
 			else
@@ -136,12 +136,12 @@ void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")
 			if (modes[0] == '-')
 				it->second.setLimit(0);
 			else if (param.empty() && param.find_first_not_of("0123456789") != std::string::npos)
-				throw 461;
+				throw ERR_NEEDMOREPARAMS;
 			else
 				it->second.setLimit(atoi(param.c_str()));
 		}
 		else
-			throw 472;
+			throw ERR_UNKNOWNMODE;
 	}
 }
 
@@ -150,18 +150,18 @@ void	Server::command_mode(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw 451;
+		throw ERR_NOTREGISTERED;
 	if (msg.params.size() < 2)
-        throw 461;
+        throw ERR_NEEDMOREPARAMS;
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	chan = (*ms).substr();
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
-		throw 403;
+		throw ERR_NOSUCHCHANNEL;
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
-		throw 441;
+		throw ERR_USERNOTINCHANNEL;
 	if (it->second.getOp().find(fd) == it->second.getOp().end())
-		throw 482;
+		throw ERR_CHANOPRIVSNEEDED;
 	std::string	modes;
 	while (++ms != msg.params.end())
 	{

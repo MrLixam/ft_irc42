@@ -6,21 +6,19 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/25 00:24:37 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:10:05 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Client.hpp"
 // Constructor initializes attributes to 0 by default 
 
-Client::Client() : _fd(0) {}
+Client::Client() : _fd(0), _nickname(""), _username(""), _realname(""), _messageBuffer(""), _sendBuffer(""), _pass(false), _toDisconnect(false), _isRegistered(false) {}
 
 Client::Client(const Client& rhs)
-{
-	*this = rhs;
-}
+: _fd(rhs._fd), _nickname(rhs._nickname), _username(rhs._username), _realname(rhs._realname), _messageBuffer(rhs._messageBuffer), _sendBuffer(rhs._sendBuffer), _pass(rhs._pass), _toDisconnect(rhs._toDisconnect), _isRegistered(rhs._isRegistered) {}
 
-Client::Client(int newFd) : _fd(newFd), _pass(false), _isRegistered(false){}
+Client::Client(int newFd) : _fd(newFd), _pass(false), _toDisconnect(false), _isRegistered(false){}
 
 Client::~Client() {}
 
@@ -29,6 +27,13 @@ Client	&Client::operator=(const Client& rhs)
 	_fd = rhs._fd;
 	_pass = rhs._pass;
 	_isRegistered = rhs._isRegistered;
+	_toDisconnect = rhs._toDisconnect;
+	_nickname = rhs._nickname;
+	_username = rhs._username;
+	_realname = rhs._realname;
+	_messageBuffer = rhs._messageBuffer;
+	_sendBuffer = rhs._sendBuffer;
+
 	return *this;
 }
 
