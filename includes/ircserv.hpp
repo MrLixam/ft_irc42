@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/29 13:56:06 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/29 14:10:01 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,29 +17,31 @@
 #include <list>
 #include <string>
 
-#define	ERR_NOSUCHNICK			commandException(401, "No such nick/channel")
-#define	ERR_NOSUCHCHANNEL		commandException(403, "No such channel")
-#define	ERR_CANNOTSENDTOCHAN	commandException(404, "Cannot send to channel")
-#define	ERR_TOOMANYTARGETS		commandException(407, "recipients. Message not delivered")
-#define ERR_NORECIPIENT			commandException(411, "No recipient given")
-#define	ERR_NOTEXTTOSEND 		commandException(412, "No text to send")
-#define	ERR_UNKNOWNCOMMAND		commandException(421, "Unknown command")
-#define	ERR_NONICKNAMEGIVEN		commandException(431, "No nickname given")
-#define	ERR_ERRONEUSNICKNAME	commandException(432, "Erroneous nickname")
-#define	ERR_NICKNAMEINUSE		commandException(433, "Nickname is already in use")
-#define	ERR_USERNOTINCHANNEL	commandException(441, "They aren't on that channel")
-#define	ERR_NOTONCHANNEL		commandException(442, "You're not on that channel")
-#define	ERR_USERONCHANNEL		commandException(443, "is already on channel")
-#define	ERR_NOTREGISTERED		commandException(451, "You have not registered")
-#define	ERR_NEEDMOREPARAMS		commandException(461, "Not enough parameters")
-#define	ERR_ALREADYREGISTRED	commandException(462, "Unauthorized command (already registered)")
-#define	ERR_PASSWDMISMATCH		commandException(464, "Password incorrect")
-#define	ERR_YOUREBANNEDCREEP	commandException(465, "You are banned from this server")
-#define	ERR_YOUWILLBEBANNED		commandException(466, "")
-#define ERR_CHANNELISFULL		commandException(471, "Cannot join channel (+l)")
-#define ERR_UNKNOWNMODE			commandException(472, "is unknown mode char to me")
-#define ERR_INVITEONLYCHAN		commandException(473, "Cannot join channel (+i)")
-#define ERR_CHANOPRIVSNEEDED	commandException(482, "You're not channel operator")
+#define ERR(code, message)		commandException(code, message)
+
+#define	ERR_NOSUCHNICK			ERR(401, "No such nick/channel")
+#define	ERR_NOSUCHCHANNEL		ERR(403, "No such channel")
+#define	ERR_CANNOTSENDTOCHAN	ERR(404, "Cannot send to channel")
+#define	ERR_TOOMANYTARGETS		ERR(407, "recipients. Message not delivered")
+#define ERR_NORECIPIENT			ERR(411, "No recipient given")
+#define	ERR_NOTEXTTOSEND 		ERR(412, "No text to send")
+#define	ERR_UNKNOWNCOMMAND		ERR(421, "Unknown command")
+#define	ERR_NONICKNAMEGIVEN		ERR(431, "No nickname given")
+#define	ERR_ERRONEUSNICKNAME	ERR(432, "Erroneous nickname")
+#define	ERR_NICKNAMEINUSE		ERR(433, "Nickname is already in use")
+#define	ERR_USERNOTINCHANNEL	ERR(441, "They aren't on that channel")
+#define	ERR_NOTONCHANNEL		ERR(442, "You're not on that channel")
+#define	ERR_USERONCHANNEL		ERR(443, "is already on channel")
+#define	ERR_NOTREGISTERED		ERR(451, "You have not registered")
+#define	ERR_NEEDMOREPARAMS		ERR(461, "Not enough parameters")
+#define	ERR_ALREADYREGISTRED	ERR(462, "Unauthorized command (already registered)")
+#define	ERR_PASSWDMISMATCH		ERR(464, "Password incorrect")
+#define	ERR_YOUREBANNEDCREEP	ERR(465, "You are banned from this server")
+#define	ERR_YOUWILLBEBANNED		ERR(466, "")
+#define ERR_CHANNELISFULL		ERR(471, "Cannot join channel (+l)")
+#define ERR_UNKNOWNMODE			ERR(472, "is unknown mode char to me")
+#define ERR_INVITEONLYCHAN		ERR(473, "Cannot join channel (+i)")
+#define ERR_CHANOPRIVSNEEDED	ERR(482, "You're not channel operator")
 
 typedef struct structured_message
 {
