@@ -12,13 +12,9 @@
 
 #include "../includes/Server.hpp"
 
-void	Server::kick_users(it_chan it, std::string users, std::string comment = "")
+void	Server::kick_user(it_chan it, std::string user, std::string comment = "")
 {
-	std::stringstream	ss(users);
-	std::string 		token;
-	while (std::getline(ss, token, ','))
-	{
-		int dest = usernameExists(token, -1);
+		int dest = usernameExists(user, -1);
 		if (dest < 0)
 			throw ERR_NOSUCHNICK(".");
 		if (it->second.getCl().find(dest) == it->second.getCl().end())
@@ -29,22 +25,39 @@ void	Server::kick_users(it_chan it, std::string users, std::string comment = "")
 			messageToClient(dest, "Kicked from" + it->first);
 		else
 			messageToClient(dest, "Kicked from" + it->first + " :" + comment);
+}
+
+void	Server::kick_users(it_chan it, std::string users, std::string comment = "")
+{
+	std::stringstream	ss(users);
+	std::string 		token;
+	while (std::getline(ss, token, ','))
+	{
+		try
+		{
+			kick_user(it, token, comment);
+		}
+		catch (commandException& e)
+		{
+			std::cout << "send error code " << e._errorCode << std::endl;
+		}
 	}
 }
 
 void	Server::command_kick(struct_msg msg, int fd)
 {
-	Client&	myClient = this->getClient(fd);
+	Client&			myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw ERR_NOTREGISTERED(".");
 	if (msg.params.size() < 2)
         throw ERR_NEEDMOREPARAMS(".");
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
+	bool solo_chan = (*ms).find(',') == std::string::npos;
 	std::stringstream	chan(*ms);
 	std::string 		token;
-	ms++;
-	std::string 		users = (*ms).substr();
+	std::string 		users = (*(++ms)).substr();
+	std::string			user;
 	std::string 		comment = "";
 	if (msg.params.size() > 2)
 		comment = (*(++ms)).substr();
@@ -59,7 +72,14 @@ void	Server::command_kick(struct_msg msg, int fd)
 				throw ERR_NOTONCHANNEL(".");
 			if (it->second.getOp().find(fd) == it->second.getOp().end())
 				throw ERR_CHANOPRIVSNEEDED(".");
-			kick_users(it, users, comment);
+			if (solo_chan)
+				kick_users(it, users, comment);
+			else
+			{
+				if (!std::getline(users, user, ','))
+					throw ERR_NEEDMOREPARAMS(".");
+				kick_user(it, user, comment);
+			}
 		}
 		catch (commandException& e)
 		{

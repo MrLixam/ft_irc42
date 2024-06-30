@@ -97,6 +97,7 @@ class Server
 		void		command_topic(struct_msg msg, int fd);
 		
 			//operatorCommands.cpp
+		void		kick_user(it_chan it, std::string user, std::string comment);
 		void		kick_users(it_chan it, std::string users, std::string comment);
         void		command_kick(struct_msg msg, int fd);
         void		command_invite(struct_msg msg, int fd);
