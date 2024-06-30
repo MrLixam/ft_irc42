@@ -6,11 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/06/30 16:15:07 by lvincent         ###   ########.fr       */
-=======
-/*   Updated: 2024/06/30 17:16:56 by gpouzet          ###   ########.fr       */
->>>>>>> 3c7068a (push)
+/*   Updated: 2024/06/30 17:40:55 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +57,7 @@ void	Server::command_kick(struct_msg msg, int fd)
 	std::stringstream	chan(*ms);
 	std::string 		token;
 	std::string 		users = (*(++ms)).substr();
+	std::stringstream	userstream(users);
 	std::string			user;
 	std::string 		comment = "";
 	if (msg.params.size() > 2)
@@ -71,17 +68,17 @@ void	Server::command_kick(struct_msg msg, int fd)
 		{
 			it_chan it = this->_channels.find(token);
 			if (it == this->_channels.end())
-				throw ERR_NOSUCHCHANNEL(".");
+				throw ERR_NOSUCHCHANNEL(myClient.getNickname() + " " + token);
 			if (it->second.getCl().find(fd) == it->second.getCl().end())
-				throw ERR_NOTONCHANNEL(".");
+				throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 			if (it->second.getOp().find(fd) == it->second.getOp().end())
-				throw ERR_CHANOPRIVSNEEDED(".");
+				throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 			if (solo_chan)
 				kick_users(it, users, comment);
 			else
 			{
-				if (!std::getline(users, user, ','))
-					throw ERR_NEEDMOREPARAMS(".");
+				if (!std::getline(userstream, user, ','))
+					throw ERR_NEEDMOREPARAMS(myClient.getNickname() + " KICK");
 				kick_user(it, user, comment);
 			}
 		}
