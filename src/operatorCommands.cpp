@@ -6,20 +6,20 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 18:05:02 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/06/30 18:38:01 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 #include "../includes/replies.hpp"
 
-void	Server::kick_user(it_chan it, std::string user, std::string comment = "")
+void	Server::kick_user(std::string nick, it_chan it, std::string user, std::string comment = "")
 {
 		int dest = usernameExists(user, -1);
 		if (dest < 0)
-			throw ERR_NOSUCHNICK(".");
+			throw ERR_NOSUCHNICK(nick + " " + user);
 		if (it->second.getCl().find(dest) == it->second.getCl().end())
-			throw ERR_USERNOTINCHANNEL(".");
+			throw ERR_USERNOTINCHANNEL(nick + " " + user + " " + it->first);
 		it->second.getCl().erase(dest);
 		it->second.getOp().erase(dest);
 		if (comment.empty())
@@ -28,7 +28,7 @@ void	Server::kick_user(it_chan it, std::string user, std::string comment = "")
 			messageToClient(dest, "Kicked from" + it->first + " :" + comment);
 }
 
-void	Server::kick_users(it_chan it, std::string users, std::string comment = "")
+void	Server::kick_users(std::string nick, it_chan it, std::string users, std::string comment = "")
 {
 	std::stringstream	ss(users);
 	std::string 		token;
@@ -36,7 +36,7 @@ void	Server::kick_users(it_chan it, std::string users, std::string comment = "")
 	{
 		try
 		{
-			kick_user(it, token, comment);
+			kick_user(nick, it, token, comment);
 		}
 		catch (commandException& e)
 		{
@@ -50,9 +50,9 @@ void	Server::command_kick(struct_msg msg, int fd)
 	Client&			myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED(".");
+		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw ERR_NEEDMOREPARAMS(".");
+        throw ERR_NEEDMOREPARAMS(myClient.getNickname()+ " " + msg.command);
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	bool solo_chan = (*ms).find(',') == std::string::npos;
 	std::stringstream	chan(*ms);
@@ -75,12 +75,12 @@ void	Server::command_kick(struct_msg msg, int fd)
 			if (it->second.getOp().find(fd) == it->second.getOp().end())
 				throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 			if (solo_chan)
-				kick_users(it, users, comment);
+				kick_users(myClient.getNickname(), it, users, comment);
 			else
 			{
 				if (!std::getline(userstream, user, ','))
 					throw ERR_NEEDMOREPARAMS(myClient.getNickname() + " KICK");
-				kick_user(it, user, comment);
+				kick_user(myClient.getNickname(), it, user, comment);
 			}
 		}
 		catch (commandException& e)
@@ -95,15 +95,15 @@ void	Server::command_invite(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED(".");
+		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw ERR_NEEDMOREPARAMS(".");
+        throw ERR_NEEDMOREPARAMS(myClient.getNickname()+ " " + msg.command);
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	nick = (*ms).substr();
 	std::string	chan = (*(++ms)).substr();
 	int dest = usernameExists(nick, -1);
 	if (dest < 0)
-		throw ERR_NOSUCHNICK(".");
+		throw ERR_NOSUCHNICK(myClient.getNickname() + " " + nick);
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
 	{
@@ -111,19 +111,19 @@ void	Server::command_invite(struct_msg msg, int fd)
 		it = this->_channels.find(chan);
 	}
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
-		throw ERR_USERNOTINCHANNEL(".");
+		throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getInvite() && it->second.getOp().find(fd) == it->second.getOp().end())
-		throw ERR_CHANOPRIVSNEEDED(".");
+		throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 	if (it->second.getCl().find(dest) != it->second.getCl().end())
-		throw ERR_USERONCHANNEL(".");
+		throw ERR_USERONCHANNEL(myClient.getNickname() + " " + nick + " " + it->first);
 	it->second.getCl().insert(dest);
 	messageToClient(fd, RPL_INVITING(myClient.getNickname(), this->getClient(dest).getNickname(), it->first));
 }
 
-void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")
+void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::string param = "")
 {
 	if (modes[0] != '+' && modes[0] != '-')
-		throw ERR_UNKNOWNMODE(".");
+		throw ERR_UNKNOWNMODE(nick + " " + modes[0]);
 	for (int i = 1; modes[i]; i++)
 	{
 		if (modes[i] == 'i')
@@ -135,19 +135,19 @@ void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")
 			if (modes[0] == '-')
 				it->second.setPassword(0);
 			else if (param.empty() || !format_key(param))
-				throw ERR_NEEDMOREPARAMS(".");
+				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
 			else
 				it->second.setPassword(param);
 		}
 		else if (modes[i] == 'o')
 		{
 			if (param.empty())
-				throw ERR_NEEDMOREPARAMS(".");
+				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
 			int user = usernameExists(param, -1);
 			if (user < 0)
-				throw ERR_NEEDMOREPARAMS(".");
+				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
 			if (it->second.getCl().find(user) == it->second.getCl().end())
-				throw ERR_USERNOTINCHANNEL(".");
+				throw ERR_USERNOTINCHANNEL(nick + " " + user + " " + it->first);
 			else if (modes[0] == '-')
 				it->second.getOp().erase(user);
 			else
@@ -158,12 +158,12 @@ void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")
 			if (modes[0] == '-')
 				it->second.setLimit(0);
 			else if (param.empty() && param.find_first_not_of("0123456789") != std::string::npos)
-				throw ERR_NEEDMOREPARAMS(".");
+				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
 			else
 				it->second.setLimit(atoi(param.c_str()));
 		}
 		else
-			throw ERR_UNKNOWNMODE(".");
+			throw ERR_UNKNOWNMODE(nick + " " + modes[i]);
 	}
 }
 
@@ -172,18 +172,18 @@ void	Server::command_mode(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED(".");
+		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw ERR_NEEDMOREPARAMS(".");
+        throw ERR_NEEDMOREPARAMS(myClient.getNickname()+ " " + msg.command);
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	chan = (*ms).substr();
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
-		throw ERR_NOSUCHCHANNEL(".");
+		throw ERR_NOSUCHCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
-		throw ERR_USERNOTINCHANNEL(".");
+		throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getOp().find(fd) == it->second.getOp().end())
-		throw ERR_CHANOPRIVSNEEDED(".");
+		throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 	std::string	modes;
 	while (++ms != msg.params.end())
 	{

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 17:22:51 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 18:38:03 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,11 @@ class Server
 		void		command_topic(struct_msg msg, int fd);
 		
 			//operatorCommands.cpp
-		void		kick_user(it_chan it, std::string user, std::string comment);
-		void		kick_users(it_chan it, std::string users, std::string comment);
+		void		kick_user(std::string nick, it_chan it, std::string user, std::string comment);
+		void		kick_users(std::string nick, it_chan it, std::string users, std::string comment);
         void		command_kick(struct_msg msg, int fd);
         void		command_invite(struct_msg msg, int fd);
-        void		modes_switch(it_chan it, std::string modes, std::string param);
+        void		modes_switch(std::string nick, it_chan it, std::string modes, std::string param);
         void		command_mode(struct_msg msg, int fd);
 
 		//Utils
