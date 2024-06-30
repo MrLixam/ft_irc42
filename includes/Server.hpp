@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/29 13:14:24 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 16:10:36 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@
 
 extern bool server_signal;
 
-typedef void (*cmdPtr)();
+		typedef std::map<std::string, Client>::iterator it_client;
+		typedef std::map<std::string, Channel>::iterator it_chan;
 
 class Server
 {
@@ -64,10 +65,6 @@ class Server
 		
 		//Setters
 		void		setMaxClients(size_t i);
-
-		//iterator
-		typedef typename std::map<std::string, Client>::iterator it_client;
-		typedef typename std::map<std::string, Channel>::iterator it_chan;
 
 		//Member functions
 		void		init(void);

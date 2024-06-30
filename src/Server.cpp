@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/29 13:21:55 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 17:02:49 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,7 @@ void	Server::commands(std::string message, int fd)
 	static std::map<std::string, int> CommandMap = initCmdMap();
 	struct_msg	msg = structuring_message(message);
 
+	Client& tmp = getClient(fd);
 	std::map<std::string, int>::iterator it = CommandMap.find(msg.command);
 
 	int commandSwitch = (it != CommandMap.end()) ? it->second : -1;
@@ -223,11 +224,14 @@ void	Server::commands(std::string message, int fd)
 		}
 
 	}
-	catch (int e)
+	catch (commandException& e)
 	{
-		std::cout << RED << "commands: send error code " << e << RESET << std::endl;
+		std::cout << RED << "commands: send error code " << e._errorCode << RESET << std::endl;
+		std::ostringstream convert;
+		convert << e._errorCode;
+		std::string message = ":42IRC " + convert.str() + " " + e._errorMessage + "\r\n";
+		tmp.appendSendBuffer(message);
 	}
-	Client& tmp = getClient(fd);
 
 	if (!tmp.getRegistered() && tmp.getPass() && !tmp.getNickname().empty() && !tmp.getRealname().empty())
 	{
@@ -258,6 +262,7 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	}
 	if (rdBytes == 0)
 	{
+		
 		_clients.erase(it->fd);
 		close(it->fd);
 		_fdvec.erase(it);
@@ -267,6 +272,7 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	}
 	message.append(buffer, rdBytes);
 
+	std::cout << message << std::endl;
 	Client& sourceClient = getClient(it->fd);
 	sourceClient.appendMessageBuffer(message);
 
