@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 18:38:01 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/06/30 18:45:53 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	Server::command_kick(struct_msg msg, int fd)
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw ERR_NEEDMOREPARAMS(myClient.getNickname()+ " " + msg.command);
+        throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	bool solo_chan = (*ms).find(',') == std::string::npos;
 	std::stringstream	chan(*ms);
@@ -97,7 +97,7 @@ void	Server::command_invite(struct_msg msg, int fd)
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw ERR_NEEDMOREPARAMS(myClient.getNickname()+ " " + msg.command);
+        throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	nick = (*ms).substr();
 	std::string	chan = (*(++ms)).substr();
@@ -174,12 +174,12 @@ void	Server::command_mode(struct_msg msg, int fd)
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw ERR_NEEDMOREPARAMS(myClient.getNickname()+ " " + msg.command);
+        throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	chan = (*ms).substr();
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
-		throw ERR_NOSUCHCHANNEL(myClient.getNickname() + " " + it->first);
+		throw ERR_NOSUCHCHANNEL(myClient.getNickname() + " " + chan);
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
 		throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getOp().find(fd) == it->second.getOp().end())
