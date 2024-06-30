@@ -6,11 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/06/30 16:15:47 by lvincent         ###   ########.fr       */
-=======
-/*   Updated: 2024/06/30 17:17:13 by gpouzet          ###   ########.fr       */
->>>>>>> 3c7068a (push)
+/*   Updated: 2024/06/30 17:42:23 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +62,20 @@ void	Server::command_user(struct_msg msg, int fd)
 void	Server::command_quit(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
+	std::string	sendoff;
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw ERR_NOTREGISTERED(".");
-	(void)msg;
-//	if (msg.params.size())
-		//send message to all client of same channel + param 1
-//	else
-		//send message to all client of same channel
+	if (msg.params.size())
+	{
+		std::list<std::string>::iterator    ms = msg.params.begin();
+		sendoff = myClient.getNickname() + " has quit:" + *ms;
+	}
+	else
+		sendoff = myClient.getNickname() + " has quit.";
 	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
+		messageToChannel(it->second.getCl(), sendoff);
 		it->second.getCl().erase(fd);
 		it->second.getOp().erase(fd);
 	}

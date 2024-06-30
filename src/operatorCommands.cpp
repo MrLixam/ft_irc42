@@ -6,11 +6,12 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 17:40:55 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 18:05:02 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
+#include "../includes/replies.hpp"
 
 void	Server::kick_user(it_chan it, std::string user, std::string comment = "")
 {
@@ -115,8 +116,8 @@ void	Server::command_invite(struct_msg msg, int fd)
 		throw ERR_CHANOPRIVSNEEDED(".");
 	if (it->second.getCl().find(dest) != it->second.getCl().end())
 		throw ERR_USERONCHANNEL(".");
-	it->second.getCl().insert(fd);
-	//RPL_invinting
+	it->second.getCl().insert(dest);
+	messageToClient(fd, RPL_INVITING(myClient.getNickname(), this->getClient(dest).getNickname(), it->first));
 }
 
 void	Server::modes_switch(it_chan it, std::string modes, std::string param = "")

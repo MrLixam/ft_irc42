@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 17:09:53 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 18:05:04 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 		throw ERR_NOSUCHCHANNEL(".");
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
 		throw ERR_NOTONCHANNEL(".");
-	(void)msg;
 	Client& tmp = getClient(fd);
 	std::string userId = user_id(tmp.getNickname(), tmp.getUsername());
 	if (msg.empty())
@@ -42,7 +41,7 @@ void	Server::create_chan(std::string chan, int fd, std::string key = "")
 	else
 	{
 		if (!format_key(key))
-			throw "bad key format";
+			throw ERR_NEEDMOREPARAMS(".");
 		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd, key)));
 	}
 }
@@ -61,7 +60,7 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	if (it->second.getInvite())
 		throw ERR_INVITEONLYCHAN(".");
 	if (it->second.getCl().find(fd) != it->second.getCl().end())
-		throw "already on channel";
+		return ;
 	if (!it->second.getPassword().empty() && key.empty())
 		throw ERR_PASSWDMISMATCH(".");
 	if (!key.empty() && it->second.getPassword() != key)
@@ -75,9 +74,6 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 		messageToClient(fd, RPL_TOPIC(it->first, it->second.getTopic()));
 	messageToClient(fd, RPL_NAMREPLY(it->first, tmp.getNickname(), clientList(it->second.getCl())));
 	messageToClient(fd, RPL_ENDOFNAMES(it->first));
-	
-	//send a JOIN Message back to client as confirmation;
-	//send 332    RPL_TOPIC and 353    RPL_NAMREPLY;
 }
 
 void	Server::command_join(struct_msg msg, int fd)
@@ -182,9 +178,9 @@ void	Server::command_part(struct_msg msg, int fd)
 			else
 				leave_chan(token, fd);
 		}
-		catch (int e)
+		catch (commandException& e)
 		{
-			std::cout << "send error code " << e << std::endl;
+			std::cout << "send error code: " << e._errorCode << std::endl;
 		}
 	}
 }
