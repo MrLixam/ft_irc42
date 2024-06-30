@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 18:45:54 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 19:03:05 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,8 @@
 void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 {
 	it_chan it = this->_channels.find(chan);
-	if (it == this->_channels.end())
-		throw ERR_NOSUCHCHANNEL(".");
-	if (it->second.getCl().find(fd) == it->second.getCl().end())
-		throw ERR_NOTONCHANNEL(".");
 	Client& tmp = getClient(fd);
-
+	
 	if (it == this->_channels.end())
 		throw ERR_NOSUCHCHANNEL(tmp.getNickname() + " " + chan);
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
@@ -39,6 +35,8 @@ void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 
 void	Server::create_chan(std::string chan, int fd, std::string key = "")
 {
+	Client& tmp = getClient(fd);
+
 	if (!format_channel(chan))
 		throw ERR_NOSUCHCHANNEL(tmp.getNickname() + " " + chan);
 	if (key.empty())
@@ -46,7 +44,7 @@ void	Server::create_chan(std::string chan, int fd, std::string key = "")
 	else
 	{
 		if (!format_key(key))
-			throw ERR_NEEDMOREPARAMS(".");
+			throw ERR_NEEDMOREPARAMS(tmp.getNickname());
 		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd, key)));
 	}
 }
@@ -130,7 +128,7 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 			throw ERR_NOTREGISTERED("*");
 	if (msg.params.size() < 2)
-        throw 412;
+        throw ERR_NOTEXTTOSEND(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::stringstream	ss(*ms);
 	std::string 		msgto;

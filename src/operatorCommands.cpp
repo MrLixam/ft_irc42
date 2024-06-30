@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 18:45:53 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 19:16:26 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,19 +135,19 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			if (modes[0] == '-')
 				it->second.setPassword(0);
 			else if (param.empty() || !format_key(param))
-				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
+				throw ERR_NEEDMOREPARAMS(nick);
 			else
 				it->second.setPassword(param);
 		}
 		else if (modes[i] == 'o')
 		{
 			if (param.empty())
-				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
+				throw ERR_NEEDMOREPARAMS(nick);
 			int user = usernameExists(param, -1);
 			if (user < 0)
-				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
+				throw ERR_NEEDMOREPARAMS(nick);
 			if (it->second.getCl().find(user) == it->second.getCl().end())
-				throw ERR_USERNOTINCHANNEL(nick + " " + user + " " + it->first);
+				throw ERR_USERNOTINCHANNEL(nick + " " + param + " " + it->first);
 			else if (modes[0] == '-')
 				it->second.getOp().erase(user);
 			else
@@ -158,7 +158,7 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			if (modes[0] == '-')
 				it->second.setLimit(0);
 			else if (param.empty() && param.find_first_not_of("0123456789") != std::string::npos)
-				throw ERR_NEEDMOREPARAMS(nick + " " + msg.command);
+				throw ERR_NEEDMOREPARAMS(nick);
 			else
 				it->second.setLimit(atoi(param.c_str()));
 		}
@@ -191,8 +191,8 @@ void	Server::command_mode(struct_msg msg, int fd)
 		std::list<std::string>::iterator	nextms = ms;
 		nextms++;
 		if (nextms != msg.params.end() && (*nextms)[0] != '-' && (*nextms)[0] != '+')
-			modes_switch(it, modes, *++ms);
+			modes_switch(myClient.getNickname(), it, modes, *++ms);
 		else
-			modes_switch(it, modes);
+			modes_switch(myClient.getNickname(), it, modes);
 	}
 }

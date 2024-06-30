@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 17:02:49 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 19:03:51 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ void	Server::commands(std::string message, int fd)
 	try
 	{
 		if (msg.command.empty())
-			throw 421;
+			throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
 		switch (commandSwitch)
 		{
 			case 0:
@@ -220,7 +220,7 @@ void	Server::commands(std::string message, int fd)
 			case 12:
 				command_ping(msg, fd); break;
 			default:
-				throw 421;
+				throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
 		}
 
 	}
