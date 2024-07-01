@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 10:15:57 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 10:38:34 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,6 +271,7 @@ void Server::receiveData(struct pollfd& it, size_t i)
 	}
 	message.append(buffer, rdBytes);
 
+	std::cout << "Received message: " << message << std::endl;
 	Client& sourceClient = _clients[it.fd];
 	sourceClient.appendMessageBuffer(message);
 
