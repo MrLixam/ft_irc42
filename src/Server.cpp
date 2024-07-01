@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 15:40:57 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 16:21:10 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,8 +328,7 @@ void Server::run(void)
 
 	while (server_signal == false)
 	{
-		int result = poll(_fdvec.begin().base(), _fdvec.size(), -1);
-		if (result == -1)
+		if (poll(_fdvec.begin().base(), _fdvec.size(), -1) == -1)
 		{
 			if (server_signal == false)
 				throw std::runtime_error("run: poll() failed");
@@ -344,17 +343,16 @@ void Server::run(void)
 					newClient(_fdvec);
 				else
 					receiveData(current, i);
+				if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
+					sendData(current, i);
 			}
 		}
 		for (size_t i = 0; i < _fdvec.size(); i++)
 		{
 			struct pollfd& current = _fdvec[i];
 			if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
-			{
-				sendData(current, i);
-			}
+					sendData(current, i);
 		}
-		//std::cout << "going through the list of fd done" << std::endl;
 	}
 	while(_fdvec.size() != 0)
 	{

@@ -6,14 +6,14 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 14:14:23 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 16:12:33 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 #include "../includes/replies.hpp"
 
-void	Server::kick_user(std::string nick, it_chan it, std::string user, std::string comment = "")
+void	Server::kick_user(std::string user_id, std::string nick, it_chan it, std::string user, std::string comment = "")
 {
 		int dest = usernameExists(user, -1);
 		if (dest < 0)
@@ -23,12 +23,12 @@ void	Server::kick_user(std::string nick, it_chan it, std::string user, std::stri
 		it->second.getCl().erase(dest);
 		it->second.getOp().erase(dest);
 		if (comment.empty())
-			messageToClient(dest, "Kicked from" + it->first);
+			messageToChannel(it->second.getCl(), KICK_RPL(user_id, it->first, user, "Kicked by operator"));
 		else
-			messageToClient(dest, "Kicked from" + it->first + " :" + comment);
+			messageToChannel(it->second.getCl(), KICK_RPL(user_id, it->first, user, comment));
 }
 
-void	Server::kick_users(std::string nick, it_chan it, std::string users, std::string comment = "")
+void	Server::kick_users(std::string user_id, std::string nick, it_chan it, std::string users, std::string comment = "")
 {
 	std::stringstream	ss(users);
 	std::string 		token;
@@ -36,7 +36,7 @@ void	Server::kick_users(std::string nick, it_chan it, std::string users, std::st
 	{
 		try
 		{
-			kick_user(nick, it, token, comment);
+			kick_user(user_id, nick, it, token, comment);
 		}
 		catch (commandException& e)
 		{
@@ -75,12 +75,12 @@ void	Server::command_kick(struct_msg msg, int fd)
 			if (it->second.getOp().find(fd) == it->second.getOp().end())
 				throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 			if (solo_chan)
-				kick_users(myClient.getNickname(), it, users, comment);
+				kick_users(user_id(myClient.getNickname(), myClient.getUsername()), myClient.getNickname(), it, users, comment);
 			else
 			{
 				if (!std::getline(userstream, user, ','))
 					throw ERR_NEEDMOREPARAMS(myClient.getNickname() + " KICK");
-				kick_user(myClient.getNickname(), it, user, comment);
+				kick_user(user_id(myClient.getNickname(), myClient.getUsername()), myClient.getNickname(), it, user, comment);
 			}
 		}
 		catch (commandException& e)
