@@ -6,15 +6,17 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/19 18:48:04 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 16:47:15 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ircserv.hpp"
+#include "../includes/colors.hpp"
 #include <cstdlib>
 #include <string>
 #include <cerrno>
 #include <iostream>
+#include <cstring>
 #include <sstream>
 #include <cctype>
 
@@ -68,21 +70,27 @@ struct_msg	structuring_message(std::string message)
 
 int parseArgs(char **argv)
 {
-	errno = 0;
 	char *end;
 	int	port = strtol(argv[1], &end, 10);
 
+	std::string arg1(argv[1]), arg2(argv[2]);
+
+	if (arg1.empty() || arg2.empty())
+	{
+		std::cout << RED << "You can't put in empty arguments" << RESET << std::endl;
+		return (1);
+	}
+
 	if (*end != '\0' || errno)
 	{
-		std::cout << "Port should be an integer" << std::endl;
+		std::cout << RED << "Port should be an integer" << RESET << std::endl;
 		return (1);
 	}
 	
 	if (port <= 0)
 	{
-		std::cout << "port can't be negative or 0" << std::endl;
+		std::cout << RED << "port can't be negative or 0" << RESET << std::endl;
 		return (1);
 	}
-	
 	return (0);
 }

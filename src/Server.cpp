@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:21:10 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 16:37:36 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,17 +133,17 @@ void Server::newClient(std::vector<struct pollfd>& new_fd)
 		std::cout << "newClient(): accept() failed" << std::endl;
 		return ;
 	}
+	if (fcntl(client_sock, F_SETFL, O_NONBLOCK) == -1)
+	{
+		close(client_sock);
+		throw std::runtime_error("newClient: setting socket option O_NONBLOCK failed");
+	}
 	if (_clients.size() == _maxClients)
 	{
 		char full_server[24] = "ERROR :Server is full\r\n";
 		send(client_sock, full_server, 23, 0);
 		close(client_sock);
 		return ;
-	}
-	if (fcntl(client_sock, F_SETFL, O_NONBLOCK) == -1)
-	{
-		close(client_sock);
-		throw std::runtime_error("newClient: setting socket option O_NONBLOCK failed");
 	}
 	struct pollfd client_pollfd;
 

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 00:30:14 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:20:18 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 16:51:16 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,5 @@
 #define QUIT_RPL(user_id, message) (":" + user_id + " QUIT :" + message + "\r\n")
 #define PONG_RPL(user_id, message) (":" + user_id + " PONG :" + message + "\r\n")
 #define	KICK_RPL(user_id, channel, nickname, reason) (":" + user_id + " KICK " + channel + " " + nickname + " :" + reason + "\r\n")
-#define RPL_CHANNELMODEIS(nickname, channel, modestring) (":42IRC 324 "+ nickname + " " + channel + " " + modestring)
+#define RPL_CHANNELMODEIS(nickname, channel, modestring) (":42IRC 324 "+ nickname + " " + channel + " " + modestring + "\r\n")
 #endif
