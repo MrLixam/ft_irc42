@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 17:15:19 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 19:18:40 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	{
 		create_chan(chan, fd, key);
 		it = this->_channels.find(chan);
+		if (it == this->_channels.end())
+			throw ERR_NOTREGISTERED("0");
 		it->second.getOp().insert(fd);
 	}
 	if (it->second.getLimit() > 0 && it->second.getLimit() >= it->second.getCl().size())

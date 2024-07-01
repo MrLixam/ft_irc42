@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:51:26 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 20:15:09 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 		{
 			if (modes[0] == '-')
 				it->second.setLimit(0);
-			else if (param.empty() && param.find_first_not_of("0123456789") != std::string::npos)
+			else if (param.empty() || param.find_first_not_of("0123456789") != std::string::npos)
 				throw ERR_NEEDMOREPARAMS(nick);
 			else
 				it->second.setLimit(atoi(param.c_str()));
@@ -184,7 +184,7 @@ void	Server::command_mode(struct_msg msg, int fd)
 		throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getOp().find(fd) == it->second.getOp().end())
 		throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
-	if (msg.params.size() == 2)
+	if (msg.params.size() == 1)
 	{
 		messageToClient(fd, RPL_CHANNELMODEIS(myClient.getNickname(), it->first, it->second.getModes()));
 		return ;
@@ -196,7 +196,7 @@ void	Server::command_mode(struct_msg msg, int fd)
 		std::list<std::string>::iterator	nextms = ms;
 		nextms++;
 		if (nextms != msg.params.end() && (*nextms)[0] != '-' && (*nextms)[0] != '+')
-			modes_switch(myClient.getNickname(), it, modes, *++ms);
+			modes_switch(myClient.getNickname(), it, modes, *(++ms));
 		else
 			modes_switch(myClient.getNickname(), it, modes);
 	}
