@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 15:16:17 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 15:35:59 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,4 +108,30 @@ void	Server::command_ping(struct_msg msg, int fd)
 		throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	messageToClient(fd, PONG_RPL(user_id(myClient.getNickname(), myClient.getUsername()), "42IRC"));
 
+}
+
+void	Server::command_name(struct_msg msg, int fd)
+{
+	Client&	myClient = this->getClient(fd);
+
+	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
+		throw ERR_NOTREGISTERED("*");
+
+	if (msg.params.size())
+	{
+		std::stringstream	ss(*(msg.params.begin()));
+		std::string 		chan;
+		while (std::getline(ss, chan, ','))
+		{
+			it_chan it = this->_channels.find(chan);
+			if (it == this->_channels.end())
+				messageToClient(fd, RPL_ENDOFNAMES(chan));
+			else
+				messageToClient(fd, RPL_NAMREPLY(chan, myClient.getNickname(), clientList(it->second.getCl())));
+		}
+	}
+	else
+		for (it_chan it = this->_channels.begin(); it != this->_channels.end(); it++)
+			messageToClient(fd, RPL_NAMREPLY(it->first, myClient.getNickname(), \
+						clientList(it->second.getCl())));
 }

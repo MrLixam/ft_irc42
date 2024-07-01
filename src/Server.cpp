@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 14:55:22 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 15:40:57 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ std::map<std::string, int> initCmdMap(void)
 	newMap["PART"] = 10;
 	newMap["CAP"] = 11;
 	newMap["PING"] = 12;
+	newMap["NAME"] = 13;
 
 	return (newMap);
 }
@@ -220,6 +221,8 @@ void	Server::commands(std::string message, int fd)
 				break;
 			case 12:
 				command_ping(msg, fd); break;
+			case 13:
+				command_name(msg, fd); break;
 			default:
 				throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
 		}

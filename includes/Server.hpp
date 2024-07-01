@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 21:00:21 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 14:58:14 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ class Server
 		void		command_user(struct_msg msg, int fd);
 		void		command_quit(struct_msg msg, int fd);
 		void		command_ping(struct_msg msg, int fd);
+		void		command_name(struct_msg msg, int fd);
 		
 			//channelCommands.cpp
 		void		command_join(struct_msg msg, int fd);
