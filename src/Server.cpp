@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 10:38:34 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:05:58 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,9 +289,9 @@ void Server::receiveData(struct pollfd& it, size_t i)
 void	Server::sendData(struct pollfd& it, size_t i)
 {
 	Client& temp = _clients[it.fd];
-	if (temp.getSendBuffer().empty())
-		return ;
+	
 	std::string buff = temp.getSendBuffer();
+	std::cout << "send message: " << buff << std::endl;
 	while (!temp.getSendBuffer().empty())
 	{
 		ssize_t bytes_sent = send(it.fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
@@ -332,7 +332,6 @@ void Server::run(void)
 		new_fds.clear();
 		for (size_t i = 0; i < _fdvec.size(); i++)
 		{
-			//std::cout << "Polling on fd: " << _fdvec[i].fd << std::endl;
 			struct pollfd& current = _fdvec[i];
 			if (current.revents & POLLIN)
 			{
@@ -343,7 +342,6 @@ void Server::run(void)
 			}
 			if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
 				sendData(current, i);
-			//std::cout << "Polling on fd: " << _fdvec[i].fd << " done" << std::endl;
 		}
 		_fdvec.insert(_fdvec.end(), new_fds.begin(), new_fds.end());
 	}

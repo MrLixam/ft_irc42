@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/30 20:17:33 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:32:19 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int Server::usernameExists(const std::string username, int fd) const
     for (std::map<int, Client>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second.getFd() != fd)
-			if (it->second.getUsername() == username)
+			if (it->second.getNickname() == username)
 				return (it->second.getFd());
     }
     return (-1);

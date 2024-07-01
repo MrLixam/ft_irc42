@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 10:31:25 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:16:07 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,14 +142,14 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 				it_chan it = this->_channels.find(msgto);
 				if (it == this->_channels.end())
 					throw ERR_NORECIPIENT(myClient.getNickname());
-				messageToChannel(it->second.getCl(), *ms);
+				messageToChannel(it->second.getCl(),":" + user_id(myClient.getNickname(), myClient.getUsername()) + " " + "PRIVMSG" + " " + msgto + " :" + *ms + "\r\n", fd);
 			}
 			else if (msgto_nickname(msgto))
 			{
 				int dest = usernameExists(msgto, -1);
 				if (dest < 0)
 					throw ERR_NOSUCHNICK(myClient.getNickname());
-				messageToClient(dest, *ms);
+				messageToClient(dest, ":" + user_id(myClient.getNickname(), myClient.getUsername()) + " " + "PRIVMSG" + " " + msgto + " :" + *ms + "\r\n");
 			}
 			else
 				throw ERR_NORECIPIENT(myClient.getNickname());
