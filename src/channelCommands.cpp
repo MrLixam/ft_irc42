@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 15:22:41 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 15:57:03 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	messageToChannel(it->second.getCl(), JOIN_RPL(user_id(tmp.getNickname(), tmp.getUsername()), it->first));
 	if (!it->second.getTopic().empty())
 		messageToClient(fd, RPL_TOPIC(it->first, it->second.getTopic(), tmp.getNickname()));
-	messageToClient(fd, RPL_NAMREPLY(it->first, tmp.getNickname(), clientList(it->second.getCl())));
+	messageToClient(fd, RPL_NAMREPLY(it->first, tmp.getNickname(), clientList(it->second.getCl(), it->second.getOp())));
 	messageToClient(fd, RPL_ENDOFNAMES(it->first));
 }
 

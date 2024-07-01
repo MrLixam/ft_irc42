@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 14:58:14 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 15:50:59 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,6 @@ class Server
 
 		//Utils
 		int			usernameExists(const std::string username, int fd) const;
-		std::string	clientList(std::set<int>& fdList);
+		std::string	clientList(std::set<int>& fdList, std::set<int> opList);
 };
 #endif

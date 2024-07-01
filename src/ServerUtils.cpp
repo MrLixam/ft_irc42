@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 12:38:57 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 15:54:02 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,15 @@ void	Server::messageToClient(int fd, std::string message)
 	_clients[fd].appendSendBuffer(message);
 }
 
-std::string Server::clientList(std::set<int>& fdList)
+std::string Server::clientList(std::set<int>& fdList, std::set<int> opList)
 {
 	std::string ret;
 	for (std::set<int>::iterator it = fdList.begin(); it != fdList.end(); it++)
 	{
-		ret += _clients[*it].getNickname();
+		if (opList.find(*it) != opList.end())
+			ret += "@" + _clients[*it].getNickname();
+		else
+			ret += _clients[*it].getNickname();
 		ret += " ";
 	}
 	ret.erase(ret.end() - 1);
