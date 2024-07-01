@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/06/30 16:20:25 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 11:30:00 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ typedef struct structured_message
 }							struct_msg;
 
 bool		isspecial(char c);
-void		format_nickname(std::string nick);
+void		format_nickname(std::string client, std::string nick);
 bool		format_channel(std::string chan);
 bool		format_key(std::string key);
 bool		msgto_nickname(std::string nick);

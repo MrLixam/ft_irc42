@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/06/30 18:59:44 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 11:34:22 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,15 @@ void	Server::command_nick(struct_msg msg, int fd)
 
 	if (!myClient.getPass())
 		throw ERR_NOTREGISTERED("*");
+	std::string client;
+	if (!myClient.getNickname().empty())
+		client = myClient.getNickname();
+	else
+		client = "*";
 	if (msg.params.size() < 1)
-	{
-		if (myClient.getNickname().empty())
-			throw ERR_NONICKNAMEGIVEN("*");
-		else
-			throw ERR_NONICKNAMEGIVEN(myClient.getNickname());
-	}
+		throw ERR_NONICKNAMEGIVEN(client);
 	std::string nick = msg.params.front();
-	format_nickname(nick);
+	format_nickname(client, nick);
 	if (usernameExists(nick, fd) > 0)
 	{
 		if (myClient.getNickname().empty())

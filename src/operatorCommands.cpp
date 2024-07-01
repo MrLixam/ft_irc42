@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 19:16:26 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 12:30:57 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void	Server::command_mode(struct_msg msg, int fd)
 
 	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
 		throw ERR_NOTREGISTERED("*");
-	if (msg.params.size() < 2)
+	if (msg.params.size() < 1)
         throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
 	std::string	chan = (*ms).substr();

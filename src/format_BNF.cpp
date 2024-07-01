@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 18:47:25 by r                 #+#    #+#             */
-/*   Updated: 2024/06/30 19:04:58 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 11:29:49 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ bool	isspecial(char c)
 	return ((c >= 0x5B && c <= 0x60) || (c >= 0x7B && c <= 0x7D));
 }
 
-void	format_nickname(std::string nick)
+void	format_nickname(std::string client, std::string nick)
 {
 	if (nick.length() > 9)
-		throw 432;
+		throw ERR_ERRONEUSNICKNAME(client + " " + nick);
 	if (!isalpha(nick[0]) && !isspecial(nick[0]))
-		throw 432;
+		throw ERR_ERRONEUSNICKNAME(client + " " + nick);
 	for (int i = 1; nick[i] && i <= 9; i++)
 		if (!isalpha(nick[i]) && !isspecial(nick[i]) && !isdigit(nick[i]) && nick[i] != '-')
-			throw 432;
+			throw ERR_ERRONEUSNICKNAME(client + " " + nick);
 }
 
 bool    format_user(std::string user)
@@ -186,12 +186,11 @@ bool	msgto_nickname(std::string nick)
 {
 	try
 	{
-		format_nickname(nick);
+		format_nickname("*", nick);
 	}
-	catch (int e)
+	catch (commandException& e)
 	{
-		if (e)
-			return (false);
+		return (false);
 	}
 	return (true);
 }
