@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:37:36 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 17:41:08 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ std::map<std::string, int> initCmdMap(void)
 	newMap["PART"] = 10;
 	newMap["CAP"] = 11;
 	newMap["PING"] = 12;
-	newMap["NAME"] = 13;
+	newMap["NAMES"] = 13;
 
 	return (newMap);
 }
@@ -249,9 +249,8 @@ void	Server::commands(std::string message, int fd)
 	}
 }
 
-void Server::receiveData(struct pollfd& it, size_t i)
+void Server::receiveData(struct pollfd& it)
 {
-	std::cout << "start receive" << std::endl;
 	char buffer[1024];
 	std::string message;
 
@@ -263,15 +262,11 @@ void Server::receiveData(struct pollfd& it, size_t i)
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 		perror("receiveData: recv() failed");
-		throw std::runtime_error("receiveData: recv() failed");
+		_clients[it.fd].setDisconnect(true);
 	}
 	if (rdBytes == 0)
 	{
-		
-		_clients.erase(it.fd);
-		close(it.fd);
-		std::cout << BLUE << "Client id: " << it.fd << " disconnected by sending 0" << RESET << std::endl;
-		_fdvec.erase(_fdvec.begin() + i);
+		_clients[it.fd].setDisconnect(true);
 		return;
 	}
 	message.append(buffer, rdBytes);
@@ -289,15 +284,13 @@ void Server::receiveData(struct pollfd& it, size_t i)
 		commands(subMessage, it.fd);
 		sourceClient.setMessageBuffer(messageBuffer);
 	}
-	std::cout << "end receive" << std::endl;
 }
 
-void	Server::sendData(struct pollfd& it, size_t i)
+void	Server::sendData(struct pollfd& it)
 {
 	Client& temp = _clients[it.fd];
 	
 	std::string buff = temp.getSendBuffer();
-	std::cout << "send message: " << buff << std::endl;
 	while (!temp.getSendBuffer().empty())
 	{
 		ssize_t bytes_sent = send(it.fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
@@ -305,20 +298,10 @@ void	Server::sendData(struct pollfd& it, size_t i)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
 				return;
-			if (bytes_sent == 0)
-				break ;
-			throw std::runtime_error("sendData: send() failed");
 		}
 		std::string sendBuffer = temp.getSendBuffer();
 		sendBuffer.erase(0, bytes_sent);
 		temp.setSendBuffer(sendBuffer);
-	}
-	if (temp.getDisconnect() == true)
-	{
-		_clients.erase(it.fd);
-		close(it.fd);
-		std::cout << BLUE << "Client id: " << it.fd << " disconnected" << RESET << std::endl;
-		_fdvec.erase(_fdvec.begin() + i);
 	}
 }
 
@@ -342,16 +325,21 @@ void Server::run(void)
 				if (current.fd == _servSocketFd)
 					newClient(_fdvec);
 				else
-					receiveData(current, i);
-				if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
-					sendData(current, i);
+					receiveData(current);
 			}
 		}
 		for (size_t i = 0; i < _fdvec.size(); i++)
 		{
 			struct pollfd& current = _fdvec[i];
 			if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
-					sendData(current, i);
+				sendData(current);
+			if (_clients[current.fd].getDisconnect() == true)
+			{
+				_clients.erase(current.fd);
+				close(current.fd);
+				std::cout << BLUE << "Client id: " << current.fd << " disconnected" << RESET << std::endl;
+				_fdvec.erase(_fdvec.begin() + i);
+			}
 		}
 	}
 	while(_fdvec.size() != 0)

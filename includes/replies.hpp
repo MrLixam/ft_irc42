@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 00:30:14 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:51:16 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 17:14:32 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #define RPL_NOTOPIC(channel, nickname) (":42IRC 331 " + nickname + " " + channel + " :" "No topic is set\r\n")
 #define RPL_TOPIC(channel, topic, nickname) (":42IRC 332 " + nickname + " " + channel + " :" + topic + "\r\n")
 #define RPL_NAMREPLY(channel, nickname, nick_list) (":42IRC 353 " + nickname + " = " + channel + " :" + nick_list + "\r\n")
-#define RPL_ENDOFNAMES(channel) (":42IRC 366 " + channel + " :End of NAMES list\r\n")
+#define RPL_ENDOFNAMES(nickname, channel) (":42IRC 366 " + nickname + " " + channel + " :End of /NAMES list.\r\n")
 #define RPL_INVITING(nickname, invited_nick, channel) (":42IRC 341 " + nickname + " " + invited_nick + " " + channel + "\r\n")
 
 #define JOIN_RPL(user_id, channel) (":" + user_id + " JOIN :" + channel + "\r\n")

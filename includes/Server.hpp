@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:20:27 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 17:27:28 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ class Server
 		void		init(void);
 		void		run(void);
 		void		newClient(std::vector<struct pollfd>& new_fd);
-		void		receiveData(struct pollfd& it, size_t i);
+		void		receiveData(struct pollfd& it);
 		void		messageToChannel(std::set<int> fdList, std::string message);
 		void		messageToChannel(std::set<int> fdList, std::string message, int senderFd);
-		void		sendData(struct pollfd& it, size_t i);
+		void		sendData(struct pollfd& it);
 		void		commands(std::string message, int fd);
 		void		messageToClient(int fd, std::string message);
 		void		messageOfTheDay(std::string message, Client& client);

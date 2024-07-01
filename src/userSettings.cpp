@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 17:06:41 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 17:16:00 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,12 +127,12 @@ void	Server::command_name(struct_msg msg, int fd)
 		{
 			it_chan it = this->_channels.find(chan);
 			if (it == this->_channels.end())
-				messageToClient(fd, RPL_ENDOFNAMES(chan));
+				messageToClient(fd, RPL_ENDOFNAMES(myClient.getNickname(), chan));
 			else
 			{
 				messageToClient(fd, RPL_NAMREPLY(chan, myClient.getNickname(), \
 							clientList(it->second.getCl(), it->second.getOp())));
-				messageToClient(fd, RPL_ENDOFNAMES(chan));
+				messageToClient(fd, RPL_ENDOFNAMES(myClient.getNickname(), chan));
 			}
 		}
 	}
