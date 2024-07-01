@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 12:16:07 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 15:22:41 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 		throw ERR_PASSWDMISMATCH(tmp.getNickname());
 	it->second.getCl().insert(fd);
 	
-	messageToClient(fd, JOIN_RPL(user_id(tmp.getNickname(), tmp.getUsername()), it->first));
+	messageToChannel(it->second.getCl(), JOIN_RPL(user_id(tmp.getNickname(), tmp.getUsername()), it->first));
 	if (!it->second.getTopic().empty())
-		messageToClient(fd, RPL_TOPIC(it->first, it->second.getTopic()));
+		messageToClient(fd, RPL_TOPIC(it->first, it->second.getTopic(), tmp.getNickname()));
 	messageToClient(fd, RPL_NAMREPLY(it->first, tmp.getNickname(), clientList(it->second.getCl())));
 	messageToClient(fd, RPL_ENDOFNAMES(it->first));
 }
@@ -211,15 +211,18 @@ void Server::command_topic(struct_msg msg, int fd)
 	if (msg.params.size() == 1)
 	{
 		if (it->second.getTopic().empty())
-			messageToClient(fd, *ms + " :No topic is set");
+			messageToClient(fd, RPL_NOTOPIC(it->first, myClient.getNickname()));
 		else
-			messageToClient(fd, *ms + " :" + it->second.getTopic());
+			messageToClient(fd, RPL_TOPIC(it->first, it->second.getTopic(), myClient.getNickname()));
 	}
 	if (msg.params.size() > 1)
 	{
 		if (it->second.getTopic_op() && it->second.getOp().find(fd) == it->second.getOp().end())
 			throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 		it->second.setTopic(*++ms);
+		std::set<int>& lst = it->second.getCl();
+		for (std::set<int>::iterator it_lst = lst.begin(); it_lst != lst.end(); it_lst++)
+			messageToClient(*it_lst, RPL_TOPIC(it->first, it->second.getTopic(), getClient(*it_lst).getNickname()));
 	}
 }
 

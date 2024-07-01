@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 12:05:58 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 14:55:22 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../includes/replies.hpp"
 #include <fcntl.h>
 #include <ctime>
+#include <sys/time.h>
 #include <cstring>
 #include <sstream>
 #include <cerrno>
@@ -247,6 +248,7 @@ void	Server::commands(std::string message, int fd)
 
 void Server::receiveData(struct pollfd& it, size_t i)
 {
+	std::cout << "start receive" << std::endl;
 	char buffer[1024];
 	std::string message;
 
@@ -284,6 +286,7 @@ void Server::receiveData(struct pollfd& it, size_t i)
 		commands(subMessage, it.fd);
 		sourceClient.setMessageBuffer(messageBuffer);
 	}
+	std::cout << "end receive" << std::endl;
 }
 
 void	Server::sendData(struct pollfd& it, size_t i)
@@ -318,38 +321,41 @@ void	Server::sendData(struct pollfd& it, size_t i)
 
 void Server::run(void)
 {
-	std::vector<struct pollfd> new_fds;
 	_fdvec.reserve(_maxClients);
 
 	while (server_signal == false)
 	{
-		if (poll(_fdvec.begin().base(), _fdvec.size(), -1) == -1)
+		int result = poll(_fdvec.begin().base(), _fdvec.size(), -1);
+		if (result == -1)
 		{
 			if (server_signal == false)
 				throw std::runtime_error("run: poll() failed");
 			break ;
 		}
-		new_fds.clear();
 		for (size_t i = 0; i < _fdvec.size(); i++)
 		{
 			struct pollfd& current = _fdvec[i];
 			if (current.revents & POLLIN)
 			{
 				if (current.fd == _servSocketFd)
-					newClient(new_fds);
+					newClient(_fdvec);
 				else
 					receiveData(current, i);
 			}
-			if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
-				sendData(current, i);
 		}
-		_fdvec.insert(_fdvec.end(), new_fds.begin(), new_fds.end());
+		for (size_t i = 0; i < _fdvec.size(); i++)
+		{
+			struct pollfd& current = _fdvec[i];
+			if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
+			{
+				sendData(current, i);
+			}
+		}
+		//std::cout << "going through the list of fd done" << std::endl;
 	}
-
 	while(_fdvec.size() != 0)
 	{
 		close(_fdvec[0].fd);
-		std::cout << _fdvec[0].fd << std::endl;
 		_fdvec.erase(_fdvec.begin());
 	}
 	//deco du serv, il faudra fermer les fd, etc..
