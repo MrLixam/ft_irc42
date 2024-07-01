@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/06/29 13:10:26 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 14:21:15 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define CHANNEL_HPP
 # include <iostream>
 # include <string>
+# include <cstdlib>
+# include <sstream>
 # include <set>
 # include "Client.hpp"
 
@@ -45,6 +47,7 @@ class Channel
 		bool 			getTopic_op(void) const;
 		std::string		getPassword(void) const;
 		size_t			getLimit(void) const;
+		std::string		getModes(void) const;
 	
 	// Setters 
 		void			setTopic(std::string topic); 

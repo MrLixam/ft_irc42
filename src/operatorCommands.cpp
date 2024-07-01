@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 12:30:57 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 14:14:23 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,11 @@ void	Server::command_mode(struct_msg msg, int fd)
 		throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getOp().find(fd) == it->second.getOp().end())
 		throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
+	if (msg.params.size() == 2)
+	{
+		messageToClient(fd, RPL_CHANNELMODEIS(myClient.getNickname(), it->first, it->second.getModes()));
+		return ;
+	}
 	std::string	modes;
 	while (++ms != msg.params.end())
 	{
@@ -195,4 +200,5 @@ void	Server::command_mode(struct_msg msg, int fd)
 		else
 			modes_switch(myClient.getNickname(), it, modes);
 	}
+	messageToClient(fd, RPL_CHANNELMODEIS(myClient.getNickname(), it->first, it->second.getModes()));
 }
