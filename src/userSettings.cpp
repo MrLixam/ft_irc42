@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 18:32:00 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 19:58:14 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,7 @@ void	Server::command_quit(struct_msg msg, int fd)
 		it->second.getCl().erase(fd);
 		it->second.getOp().erase(fd);
 		if (!it->second.getCl().size())
-		{
-			it_chan tmp_it = it;
-			it++;
-			this->_channels.erase(tmp_it);
-			if (it == _channels.end())
-				break ;
-		}
+			this->_channels.erase(it++);
 	}
 	messageToClient(fd, QUIT_RPL(user_id(myClient.getNickname(), myClient.getUsername()), sendoff));
 	myClient.setDisconnect(true);

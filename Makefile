@@ -6,7 +6,7 @@
 #    By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/18 05:51:01 by lvincent          #+#    #+#              #
-#    Updated: 2024/07/01 15:28:56 by lvincent         ###   ########.fr        #
+#    Updated: 2024/07/01 20:13:11 by lvincent         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ RED = \033[1;31m
 
 RESET = \033[0m
 
-CC 		=	c++ 
+CC 		=	clang++ 
 
 FLAGS 	=	-Werror -Wall -Wextra -std=c++98
 NAME 	=	ircserv
