@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 18:22:12 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 18:29:43 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ void	Server::command_quit(struct_msg msg, int fd)
 		sendoff = myClient.getNickname() + " has quit.";
 	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
+		if (it->second.getCl.find(fd) == it->second.getCl().end())
+			continue ;
 		messageToChannel(it->second.getCl(), QUIT_RPL(user_id(myClient.getNickname(), myClient.getUsername()), sendoff), fd);
 		it->second.getCl().erase(fd);
 		it->second.getOp().erase(fd);
