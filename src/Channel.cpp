@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 14:20:57 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 17:22:15 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ Channel	&Channel::operator=(const Channel& rhs)
 	size_t				Channel::getLimit(void)	const				{ return _limit; }
 	std::string			Channel::getModes(void) const
 {
-	std::string modes = "+";
-	if (this->_invite)
-		modes + "i";
+	std::string modes = "no modes";
+	if (this->_invite == true)
+		modes = "+i";
 	if (this->_topic_op)
 		modes + "t";
 	if (!this->_password.empty())
