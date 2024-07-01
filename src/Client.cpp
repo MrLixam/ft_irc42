@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:03:14 by r                 #+#    #+#             */
-/*   Updated: 2024/06/29 13:10:05 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 21:07:49 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,6 @@ Client	&Client::operator=(const Client& rhs)
 
 	return *this;
 }
-
-// Getters 
-	int			Client::getFd(void) const					{ return _fd; }
-	std::string Client::getNickname(void) const				{ return _nickname; }
-	std::string Client::getUsername(void) const				{ return _username; }
-	std::string	Client::getRealname(void) const				{ return _realname; }
-	std::string	Client::getMessageBuffer(void) const		{ return _messageBuffer; }
-	bool		Client::getPass(void) const					{ return _pass; }
-	std::string Client::getSendBuffer(void) const			{ return _sendBuffer; }
-	bool		Client::getDisconnect(void) const			{ return _toDisconnect; }
-	bool		Client::getRegistered(void) const			{ return _isRegistered; }
 
 // Setters 
 	void	Client::setFd(int fd)							{ _fd = fd; }

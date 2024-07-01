@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 18:38:03 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/06/30 21:00:21 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 
 extern bool server_signal;
 
-		typedef std::map<std::string, Client>::iterator it_client;
 		typedef std::map<std::string, Channel>::iterator it_chan;
 
 class Server
@@ -70,10 +69,10 @@ class Server
 		void		init(void);
 		void		run(void);
 		void		newClient(std::vector<struct pollfd>& new_fd);
-		void		receiveData(std::vector<struct pollfd>::iterator &it);
+		void		receiveData(struct pollfd& it, size_t i);
 		void		messageToChannel(std::set<int> fdList, std::string message);
 		void		messageToChannel(std::set<int> fdList, std::string message, int senderFd);
-		void		sendData(std::vector<struct pollfd>::iterator it);
+		void		sendData(struct pollfd& it, size_t i);
 		void		commands(std::string message, int fd);
 		void		messageToClient(int fd, std::string message);
 		void		messageOfTheDay(std::string message, Client& client);

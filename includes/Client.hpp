@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/29 12:54:28 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 21:07:40 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,15 @@ class Client
 		Client& operator=(const Client &rhs); 
 	
 	// Getters 
-		int 		getFd(void) const; 
-		std::string	getNickname(void) const; 
-		std::string	getUsername(void) const;
-		std::string	getRealname(void) const;
-		std::string	getMessageBuffer(void) const;
-		bool		getPass(void) const;
-		std::string	getSendBuffer(void) const;
-		bool		getDisconnect(void) const;
-		bool		getRegistered(void) const;
+	int			getFd(void) const					{ return _fd; }
+	std::string getNickname(void) const				{ return _nickname; }
+	std::string getUsername(void) const				{ return _username; }
+	std::string	getRealname(void) const				{ return _realname; }
+	std::string	getMessageBuffer(void) const		{ return _messageBuffer; }
+	bool		getPass(void) const					{ return _pass; }
+	std::string getSendBuffer(void) const			{ return _sendBuffer; }
+	bool		getDisconnect(void) const			{ return _toDisconnect; }
+	bool		getRegistered(void) const			{ return _isRegistered; }
 	
 	// Setters 
 		void		setFd(int fd); 

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/06/30 19:03:51 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/01 10:15:57 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ void	Server::commands(std::string message, int fd)
 	static std::map<std::string, int> CommandMap = initCmdMap();
 	struct_msg	msg = structuring_message(message);
 
-	Client& tmp = getClient(fd);
+	Client& tmp = _clients[fd];
 	std::map<std::string, int>::iterator it = CommandMap.find(msg.command);
 
 	int commandSwitch = (it != CommandMap.end()) ? it->second : -1;
@@ -245,14 +245,14 @@ void	Server::commands(std::string message, int fd)
 	}
 }
 
-void Server::receiveData(std::vector<struct pollfd>::iterator &it)
+void Server::receiveData(struct pollfd& it, size_t i)
 {
 	char buffer[1024];
 	std::string message;
 
 	errno = 0;
 	memset(buffer, 0, 1024);
-	ssize_t rdBytes = recv(it->fd, buffer, 1024, 0);
+	ssize_t rdBytes = recv(it.fd, buffer, 1024, 0);
 	if (rdBytes == -1)
 	{
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -263,17 +263,15 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 	if (rdBytes == 0)
 	{
 		
-		_clients.erase(it->fd);
-		close(it->fd);
-		_fdvec.erase(it);
-		it = _fdvec.end();
-		std::cout << BLUE << "Client id: " << it->fd << " disconnected by sending 0" << RESET << std::endl;
+		_clients.erase(it.fd);
+		close(it.fd);
+		std::cout << BLUE << "Client id: " << it.fd << " disconnected by sending 0" << RESET << std::endl;
+		_fdvec.erase(_fdvec.begin() + i);
 		return;
 	}
 	message.append(buffer, rdBytes);
 
-	std::cout << message << std::endl;
-	Client& sourceClient = getClient(it->fd);
+	Client& sourceClient = _clients[it.fd];
 	sourceClient.appendMessageBuffer(message);
 
 	while (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
@@ -282,21 +280,20 @@ void Server::receiveData(std::vector<struct pollfd>::iterator &it)
 		std::string subMessage = messageBuffer.substr(0, messageBuffer.find("\r\n") + 2);
 		
 		messageBuffer.erase(0, subMessage.length());
-		commands(subMessage, it->fd);
+		commands(subMessage, it.fd);
 		sourceClient.setMessageBuffer(messageBuffer);
 	}
 }
 
-void	Server::sendData(std::vector<struct pollfd>::iterator it)
+void	Server::sendData(struct pollfd& it, size_t i)
 {
-	Client& temp = getClient(it->fd);
+	Client& temp = _clients[it.fd];
 	if (temp.getSendBuffer().empty())
 		return ;
 	std::string buff = temp.getSendBuffer();
 	while (!temp.getSendBuffer().empty())
 	{
-		errno = 0;
-		ssize_t bytes_sent = send(it->fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
+		ssize_t bytes_sent = send(it.fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
 		if (bytes_sent == -1)
 		{
 			if (errno == EAGAIN || errno == EWOULDBLOCK)
@@ -309,53 +306,51 @@ void	Server::sendData(std::vector<struct pollfd>::iterator it)
 		sendBuffer.erase(0, bytes_sent);
 		temp.setSendBuffer(sendBuffer);
 	}
-	std::cout << "Message sent to client " << it->fd << ">  " << buff << std::endl;
 	if (temp.getDisconnect() == true)
 	{
-		_clients.erase(it->fd);
-		close(it->fd);
-		_fdvec.erase(it);
-		it = _fdvec.end();
-		std::cout << BLUE << "Client id: " << it->fd << " disconnected" << RESET << std::endl;
+		_clients.erase(it.fd);
+		close(it.fd);
+		std::cout << BLUE << "Client id: " << it.fd << " disconnected" << RESET << std::endl;
+		_fdvec.erase(_fdvec.begin() + i);
 	}
 }
 
 void Server::run(void)
 {
+	std::vector<struct pollfd> new_fds;
+	_fdvec.reserve(_maxClients);
+
 	while (server_signal == false)
 	{
 		if (poll(_fdvec.begin().base(), _fdvec.size(), -1) == -1)
 		{
 			if (server_signal == false)
 				throw std::runtime_error("run: poll() failed");
-			return ;
+			break ;
 		}
-		std::vector<struct pollfd> new_fds;
-		for(std::vector<pollfd>::iterator it = _fdvec.begin(); it != _fdvec.end(); it++)
+		new_fds.clear();
+		for (size_t i = 0; i < _fdvec.size(); i++)
 		{
-			if (it->revents & POLLIN)
+			//std::cout << "Polling on fd: " << _fdvec[i].fd << std::endl;
+			struct pollfd& current = _fdvec[i];
+			if (current.revents & POLLIN)
 			{
-				if (it->fd == _servSocketFd)
+				if (current.fd == _servSocketFd)
 					newClient(new_fds);
 				else
-				{
-					receiveData(it);
-					if (it == _fdvec.end())
-						break;
-				}
+					receiveData(current, i);
 			}
-			else if (it->revents & POLLOUT)
-			{
-				sendData(it);
-				if (it == _fdvec.end())
-					break;
-			}
+			if (!_clients[current.fd].getSendBuffer().empty() && current.revents & POLLOUT)
+				sendData(current, i);
+			//std::cout << "Polling on fd: " << _fdvec[i].fd << " done" << std::endl;
 		}
 		_fdvec.insert(_fdvec.end(), new_fds.begin(), new_fds.end());
 	}
+
 	while(_fdvec.size() != 0)
 	{
 		close(_fdvec[0].fd);
+		std::cout << _fdvec[0].fd << std::endl;
 		_fdvec.erase(_fdvec.begin());
 	}
 	//deco du serv, il faudra fermer les fd, etc..

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 15:29:36 by r                 #+#    #+#             */
-/*   Updated: 2024/06/29 13:55:57 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/06/30 20:17:33 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,13 @@ int Server::usernameExists(const std::string username, int fd) const
 
 Client&	Server::getClient(int fd)
 {
-	std::map<int, Client>::iterator it = _clients.find(fd);
-	if (it == _clients.end()) //le fd n'existe pas dans le serveur
-		throw std::runtime_error("getClient: invalid fd"); //peu importe juste de la gestion d'erreur
-	Client& tmp = it->second;
-	return (tmp);
+	return (_clients[fd]);
 }
 
 void	Server::messageToChannel(std::set<int> fdList, std::string message)
 {
 	for (std::set<int>::iterator it = fdList.begin(); it != fdList.end(); it++)
-	{
-		try
-		{
-			getClient(*it).appendSendBuffer(message);
-		}
-		catch (std::exception& e)
-		{
-			std::cerr << RED << "no such fd in server" << RESET << std::endl;
-		}
-	}
+		_clients[*it].appendSendBuffer(message);
 }
 
 void	Server::messageToChannel(std::set<int> fdList, std::string message, int senderFd)
@@ -55,28 +42,14 @@ void	Server::messageToChannel(std::set<int> fdList, std::string message, int sen
 	{
 		if (*it == senderFd)
 			continue ;
-		try
-		{
-			getClient(*it).appendSendBuffer(message);
-		}
-		catch (std::exception& e)
-		{
-			std::cerr << RED << "no such fd in server" << RESET << std::endl;
-		}
+		_clients[*it].appendSendBuffer(message);
 	}
 }
 
 
 void	Server::messageToClient(int fd, std::string message)
 {
-	try
-	{
-		getClient(fd).appendSendBuffer(message);
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << RED << "no such fd in server" << RESET << std::endl;
-	}
+	_clients[fd].appendSendBuffer(message);
 }
 
 std::string Server::clientList(std::set<int>& fdList)
@@ -84,7 +57,7 @@ std::string Server::clientList(std::set<int>& fdList)
 	std::string ret;
 	for (std::set<int>::iterator it = fdList.begin(); it != fdList.end(); it++)
 	{
-		ret += getClient(*it).getNickname();
+		ret += _clients[*it].getNickname();
 		ret += " ";
 	}
 	ret.erase(ret.end() - 1);
