@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 15:57:03 by r                ###   ########.fr       */
+/*   Updated: 2024/07/01 16:28:58 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	Server::leave_chan(std::string chan, int fd, std::string msg = "")
 		messageToChannel(it->second.getCl(), PART_RPL(userId, it->first, msg));
 	it->second.getCl().erase(fd);
 	it->second.getOp().erase(fd);
+	if (!it->second.getCl().size())
+		this->_channels.erase(chan);
 }
 
 void	Server::create_chan(std::string chan, int fd, std::string key = "")
