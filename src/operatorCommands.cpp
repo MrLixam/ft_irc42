@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 21:17:50 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 21:28:48 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,12 +193,14 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 
 void	Server::mode_reply(chan_modes save, it_chan it, std::string nick)
 {
+	std::string minus = "-";
+	std::string plus = "+"
 	if (it->second.getInvite() != save.invite)
 	{
 		if (it->second.getInvite())
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+i"));
+			plus += "i";
 		else
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-i"));
+			minus += "i";
 	}
 	if (it->second.getTopic_op() != save.topic_op)
 	{
