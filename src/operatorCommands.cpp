@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 21:33:53 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 21:39:05 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ void	Server::mode_reply(chan_modes save, it_chan it, std::string userid)
 
 	for (std::set<int>::iterator it_op = save.operators.begin(); it_op != save.operators.end(); it_op++)
 	{
-		if (save.operators.find(*it_op) == save.operators.end())
+		if (newOp.find(*it_op) == newOp.end())
 		{
 			minus += "o";
 			changes += getClient(*it_op).getNickname() + " ";
