@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 16:37:44 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 19:33:04 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 
 Server::Server(void)
 {
-	_port = 4444;
+	_port = 6667;
 	_password = "";
 }
 
@@ -247,7 +247,7 @@ void	Server::commands(std::string message, int fd)
 		messageToClient(tmp.getFd(), RPL_YOURHOST(tmp.getNickname(), "42IRC", "1.0"));
 		messageToClient(tmp.getFd(), RPL_CREATED(tmp.getNickname(), _creationDate));
 		messageToClient(tmp.getFd(), RPL_MYINFO(tmp.getNickname(), "42IRC", "1.0", ".", "it klo"));
-		messageToClient(tmp.getFd(), RPL_ISUPPORT(tmp.getNickname(), "CHANTYPES=&# MODES=3 CHANMODES=t,o,kl,i NICKLEN=9 MAXTARGETS=1 PREFIX=@"));
+		messageToClient(tmp.getFd(), RPL_ISUPPORT(tmp.getNickname(), "CHANTYPES=&# CHANMODES=t,o,kl,i NICKLEN=9 MAXTARGETS=1 PREFIX=@"));
 		messageOfTheDay("Welcome to 42IRC", tmp);
 		tmp.setRegistered(true);
 	}

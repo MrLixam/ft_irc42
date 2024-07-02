@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 15:47:54 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 19:25:09 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,15 @@ typedef struct structured_message
 	std::list<std::string>	params;
 }							struct_msg;
 
-bool		isspecial(char c);
-void		format_nickname(std::string client, std::string nick);
-bool		format_channel(std::string chan);
-bool		format_key(std::string key);
-bool		msgto_nickname(std::string nick);
-struct_msg	structuring_message(std::string message);
-std::string	msg_source(struct_msg msg);
-int			parseArgs(char **argv);
+bool						isspecial(char c);
+void						format_nickname(std::string client, std::string nick);
+bool						format_channel(std::string chan);
+bool						format_key(std::string key);
+bool						msgto_nickname(std::string nick);
+struct_msg					structuring_message(std::string message);
+std::string					msg_source(struct_msg msg);
+int							parseArgs(char **argv);
+std::vector<std::string>	parseMode(std::vector<std::string> modestring_lst);
 
 class commandException : public std::exception
 {
