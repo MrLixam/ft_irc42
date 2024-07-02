@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 19:33:04 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 21:55:21 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,7 @@ void Server::receiveData(struct pollfd& it)
 {
 	char buffer[1024];
 	std::string message;
+	Client& sourceClient = _clients[it.fd];
 
 	memset(buffer, 0, 1024);
 	ssize_t rdBytes = recv(it.fd, buffer, 1024, 0);
@@ -264,13 +265,26 @@ void Server::receiveData(struct pollfd& it)
 		_clients[it.fd].setDisconnect(true);
 	if (rdBytes == 0)
 	{
+		for (std::map<std::string, Channel>::iterator itmp = _channels.begin(); itmp != _channels.end(); itmp++)
+		{
+			if (itmp->second.getCl().find(it.fd) == itmp->second.getCl().end())
+				continue ;
+			messageToChannel(itmp->second.getCl(), QUIT_RPL(user_id(sourceClient.getNickname(), sourceClient.getUsername()), "Has Quit"), it.fd);
+			itmp->second.getCl().erase(it.fd);
+			itmp->second.getOp().erase(it.fd);
+			if (!itmp->second.getCl().size())
+			{
+				this->_channels.erase(itmp++);
+				if (itmp == this->_channels.end())
+					break ;
+			}
+		}
 		_clients[it.fd].setDisconnect(true);
 		return;
 	}
 	message.append(buffer, rdBytes);
 
 	std::cout << "Received message: " << message << std::endl;
-	Client& sourceClient = _clients[it.fd];
 	sourceClient.appendMessageBuffer(message);
 
 	while (sourceClient.getMessageBuffer().find("\r\n") != sourceClient.getMessageBuffer().npos)
