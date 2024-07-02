@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 20:16:35 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:55:55 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,6 @@ void	Server::command_mode(struct_msg msg, int fd)
 		messageToClient(fd, RPL_CHANNELMODEIS(myClient.getNickname(), it->first, it->second.getModes()));
 		return ;
 	}
-	//std::string	modes;
 	std::vector<std::string>	modes;
 	std::vector<std::string>	param;
 	chan_modes save = it->second.getSaveModes();
@@ -266,17 +265,9 @@ void	Server::command_mode(struct_msg msg, int fd)
 			modes.push_back(*ms);
 		else
 			param.push_back(*ms);
-				/*
-		std::list<std::string>::iterator	nextms = ms;
-		nextms++;
-		if (nextms != msg.params.end() && (*nextms)[0] != '-' && (*nextms)[0] != '+')
-			modes_switch(myClient.getNickname(), it, modes, *(++ms));
-		else
-			modes_switch(myClient.getNickname(), it, modes);
-			*/
 	}
 	std::vector<std::string> mode_vector = parseMode(modes);
-	std::vector<std::string>::iterator	mode_vec = mode_vector.begin();
-	while (mode_vec != modes.end())
-		modes_switch(myClient.getNickname(), it, *mode_vec, param);
+	for (size_t	mode_vec = 0; mode_vec < modes.size(); mode_vec++)
+		modes_switch(myClient.getNickname(), it, mode_vector[mode_vec], param);
+	mode_reply(save, it, myClient.getNickname());
 }

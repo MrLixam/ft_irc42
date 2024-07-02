@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 20:00:19 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:38:51 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ std::vector<std::string>	parseMode(std::vector<std::string> modestring_lst)
     for (size_t i = 0; i < modestring_lst.size(); i++)
     {
         std::string modestring = modestring_lst[i];
-
         for (size_t j = 0; j < modestring.size(); j++)
         {
             if (modestring[j] == '+' || modestring[j] == '-')
@@ -35,7 +34,6 @@ std::vector<std::string>	parseMode(std::vector<std::string> modestring_lst)
                 if (j >= modestring.size() - 1)
                     continue ;
                 modestring_return.push_back(modestring.substr(j, modestring.find_first_of("-+", j + 1)));
-                j = modestring.find_first_of("-+", j + 1);
             }
         }
     }
