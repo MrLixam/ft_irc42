@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 16:39:43 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:18:02 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,7 @@ void	Server::create_chan(std::string chan, int fd, std::string key = "")
 	if (key.empty())
 		_channels[chan] = Channel(fd);
 	else
-	{
-		if (!format_key(key))
-			throw ERR_NEEDMOREPARAMS(tmp.getNickname());
 		_channels[chan] = Channel(fd, key);
-	}
 }
 
 void	Server::join_chan(std::string chan, int fd, std::string key = "")

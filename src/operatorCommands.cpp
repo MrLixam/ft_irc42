@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 20:05:03 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:16:35 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	Server::command_invite(struct_msg msg, int fd)
 	messageToClient(dest, msg_source(msg) + " INVITE " + this->getClient(dest).getNickname() + " " + chan + "\r\n");
 }
 
-void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::vector<std::string> &param)
+void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::vector<std::string>& param)
 {
 	if (modes[0] != '+' && modes[0] != '-')
 		throw ERR_UNKNOWNMODE(nick + " " + modes[0]);
@@ -139,7 +139,7 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 				param.erase(it_param);
 				if (modes[0] == '-' && it->second.getPassword() == key)
 					it->second.setPassword(0);
-				else (it->second.getPassword().empty())
+				else if (it->second.getPassword().empty())
 					it->second.setPassword(key);
 				else
 					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " k " + key + " :Channel key already set");
@@ -180,7 +180,7 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			else
 				throw ERR_UNKNOWNMODE(nick + " " + modes[i]);
 		}
-		catch (commandException& e)
+		catch (commandException& e) {}
 	}
 }
 
@@ -189,36 +189,36 @@ void	Server::mode_reply(chan_modes save, it_chan it, std::string nick)
 	if (it->second.getInvite() != save.invite)
 	{
 		if (it->second.getInvite())
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "+i"));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+i"));
 		else
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "-i"));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-i"));
 	}
 	if (it->second.getTopic_op() != save.topic_op)
 	{
 		if (it->second.getTopic_op())
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "+t"));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+t"));
 		else
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "-t"));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-t"));
 	}
 	if (it->second.getPassword() != save.password)
 	{
 		if (it->second.getPassword().empty())
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "-k"));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-k"));
 		else
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "+k " + it->second.getPassword()));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+k " + it->second.getPassword()));
 	}
 	{
 		std::set<int> newOp = it->second.getOp();
 
-		for  (std::set<int>::iterator it = newOp.begin(); it != newOp.end(); it++)
+		for  (std::set<int>::iterator it_op = newOp.begin(); it_op != newOp.end(); it_op++)
 		{
-			if (save.operators.find(*it) == save.operators.end())
-				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+o " + getClient(*it)));
+			if (save.operators.find(*it_op) == save.operators.end())
+				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+o " + getClient(*it_op).getNickname()));
 		}
-		for  (std::set<int>::iterator it = save.operators.begin(); it != save.operators.end(); it++)
+		for  (std::set<int>::iterator it_op = save.operators.begin(); it_op != save.operators.end(); it_op++)
 		{
-			if (save.operators.find(*it) == save.operators.end())
-				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-o " + getClient(*it)));
+			if (save.operators.find(*it_op) == save.operators.end())
+				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-o " + getClient(*it_op).getNickname()));
 		}
 	}
 	if (it->second.getLimit() != save.limit)
@@ -228,7 +228,7 @@ void	Server::mode_reply(chan_modes save, it_chan it, std::string nick)
 		else
 		{
 			std::stringstream ss;
-    	    ss << this->_limit;
+    	    ss << it->second.getLimit();
 			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+l " + ss.str()));
 		}
 	}
@@ -263,9 +263,9 @@ void	Server::command_mode(struct_msg msg, int fd)
 	while (++ms != msg.params.end())
 	{
 		if ((*ms)[0] == '+' || (*ms)[0] == '-')
-			modes.insert(*ms);
+			modes.push_back(*ms);
 		else
-			param.insert(*ms);
+			param.push_back(*ms);
 				/*
 		std::list<std::string>::iterator	nextms = ms;
 		nextms++;
