@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 21:28:48 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 21:29:22 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,10 +191,12 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 	}
 }
 
-void	Server::mode_reply(chan_modes save, it_chan it, std::string nick)
+void	Server::mode_reply(chan_modes save, it_chan it, std::string userid)
 {
 	std::string minus = "-";
-	std::string plus = "+"
+	std::string plus = "+";
+	std::string changes;
+	
 	if (it->second.getInvite() != save.invite)
 	{
 		if (it->second.getInvite())
@@ -205,42 +207,54 @@ void	Server::mode_reply(chan_modes save, it_chan it, std::string nick)
 	if (it->second.getTopic_op() != save.topic_op)
 	{
 		if (it->second.getTopic_op())
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+t"));
+			plus += "t";
 		else
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-t"));
+			minus += "t";
 	}
 	if (it->second.getPassword() != save.password)
 	{
-		if (it->second.getPassword().empty())
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-k"));
+		if (!it->second.getPassword().empty())
+			plus += "k";
 		else
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+k " + it->second.getPassword()));
+			minus += "k";
+		changes += it->second.getPassword() + " ";
 	}
-	{
-		std::set<int> newOp = it->second.getOp();
+	
+	std::set<int> newOp = it->second.getOp();
 
-		for  (std::set<int>::iterator it_op = newOp.begin(); it_op != newOp.end(); it_op++)
+	for (std::set<int>::iterator it_op = save.operators.begin(); it_op != save.operators.end(); it_op++)
+	{
+		if (save.operators.find(*it_op) == save.operators.end())
 		{
-			if (save.operators.find(*it_op) == save.operators.end())
-				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+o " + getClient(*it_op).getNickname()));
+			minus += "o";
+			changes += getClient(*it_op).getNickname() + " ";
 		}
-		for  (std::set<int>::iterator it_op = save.operators.begin(); it_op != save.operators.end(); it_op++)
+	}
+	for (std::set<int>::iterator it_op = newOp.begin(); it_op != newOp.end(); it_op++)
+	{
+		if (save.operators.find(*it_op) == save.operators.end())
 		{
-			if (save.operators.find(*it_op) == save.operators.end())
-				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-o " + getClient(*it_op).getNickname()));
+			plus += "o";
+			changes += getClient(*it_op).getNickname() + " ";
 		}
 	}
 	if (it->second.getLimit() != save.limit)
 	{
 		if (it->second.getLimit() == 0)
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-l"));
+			minus += "l";
 		else
 		{
 			std::stringstream ss;
     	    ss << it->second.getLimit();
-			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+l " + ss.str()));
+			plus += "l";
 		}
 	}
+	std::string result;
+	if (minus != "-")
+		result += minus;
+	if (plus != "+")
+		result += plus;
+	messageToChannel(it->second.getCl(), MODE_RPL(userid, it->first, result, changes));
 }
 
 void	Server::command_mode(struct_msg msg, int fd)
@@ -278,5 +292,5 @@ void	Server::command_mode(struct_msg msg, int fd)
 	std::vector<std::string> mode_vector = parseMode(modes);
 	for (size_t	mode_vec = 0; mode_vec < modes.size(); mode_vec++)
 		modes_switch(myClient.getNickname(), it, mode_vector[mode_vec], param);
-	mode_reply(save, it, myClient.getNickname());
+	mode_reply(save, it, user_id(myClient.getNickname(), myClient.getUsername()));
 }

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 00:30:14 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 17:14:32 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 21:22:19 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #define RPL_NAMREPLY(channel, nickname, nick_list) (":42IRC 353 " + nickname + " = " + channel + " :" + nick_list + "\r\n")
 #define RPL_ENDOFNAMES(nickname, channel) (":42IRC 366 " + nickname + " " + channel + " :End of /NAMES list.\r\n")
 #define RPL_INVITING(nickname, invited_nick, channel) (":42IRC 341 " + nickname + " " + invited_nick + " " + channel + "\r\n")
+#define RPL_CHANNELMODEIS(nickname, channel, modestring) (":42IRC 324 "+ nickname + " " + channel + " " + modestring + "\r\n")
 
 #define JOIN_RPL(user_id, channel) (":" + user_id + " JOIN :" + channel + "\r\n")
 #define PART_RPL(user_id, channel, message) (":" + user_id + " PART " + channel + " " + message + "\r\n")
@@ -32,5 +33,5 @@
 #define QUIT_RPL(user_id, message) (":" + user_id + " QUIT :" + message + "\r\n")
 #define PONG_RPL(user_id, message) (":" + user_id + " PONG :" + message + "\r\n")
 #define	KICK_RPL(user_id, channel, nickname, reason) (":" + user_id + " KICK " + channel + " " + nickname + " :" + reason + "\r\n")
-#define RPL_CHANNELMODEIS(nickname, channel, modestring) (":42IRC 324 "+ nickname + " " + channel + " " + modestring + "\r\n")
+#define	MODE_RPL(user_id, channel, modestring, params) (":" + user_id + " MODE " + channel + " " + modestring + " " + params + "\r\n")
 #endif
