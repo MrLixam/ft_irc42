@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 22:01:07 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 22:58:19 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,8 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 {
 	if (modes[0] != '+' && modes[0] != '-')
 		throw ERR_UNKNOWNMODE(nick + " " + modes[0]);
+	if (modes.size() <= 1)
+		return;
 	for (int i = 1; modes[i]; i++)
 	{
 		try
@@ -291,7 +293,7 @@ void	Server::command_mode(struct_msg msg, int fd)
 			param.push_back(*ms);
 	}
 	std::vector<std::string> mode_vector = parseMode(modes);
-	for (size_t	mode_vec = 0; mode_vec < modes.size(); mode_vec++)
+	for (size_t	mode_vec = 0; mode_vec < mode_vector.size(); mode_vec++)
 		modes_switch(myClient.getNickname(), it, mode_vector[mode_vec], param, fd);
 	mode_reply(save, it, user_id(myClient.getNickname(), myClient.getUsername()));
 }
