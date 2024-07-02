@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 16:47:15 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 15:57:07 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,16 @@ struct_msg	structuring_message(std::string message)
     }
 
     return msg;
+}
+
+std::string	msg_source(struct_msg msg)
+{
+	std::string	source = "";
+	if (!msg.user.empty())
+		source += "!" + msg.user;
+	if (!msg.host.empty())
+		source += "@" + msg.host;
+	return (source);
 }
 
 int parseArgs(char **argv)

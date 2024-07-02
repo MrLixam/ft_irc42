@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 14:45:10 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 16:35:10 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	Server::command_pass(struct_msg msg, int fd)
 void	Server::command_nick(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
+	std::set<int>	update;
 
 	if (!myClient.getPass())
 		throw ERR_NOTREGISTERED("*");
@@ -50,6 +51,14 @@ void	Server::command_nick(struct_msg msg, int fd)
 		else
 			throw ERR_NICKNAMEINUSE(myClient.getNickname() + " " + nick);
 	}
+	update.insert(fd);
+	for (it_chan it = this->_channels.begin(); it != this->_channels.end(); it++)
+		if (it->second.getCl().find(fd) != it->second.getCl().end())
+			for (std::set<int>::iterator add = it->second.getCl().begin(); add != it->second.getCl().end(); add++)
+				if (update.find(*add) == update.end())
+					update.insert(*add);
+	for (std::set<int>::iterator send = update.begin(); send != update.end(); send++)
+		messageToClient(*send, ":" + client + msg_source(msg) + " NICK " + nick + "\r\n");
 	myClient.setNickname(nick);
 }
 

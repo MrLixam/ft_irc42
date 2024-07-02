@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 14:06:18 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 15:53:09 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,16 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 	}
 	if (it->second.getLimit() > 0 && it->second.getLimit() <= it->second.getCl().size())
 		throw ERR_CHANNELISFULL(tmp.getNickname() + " " + it->first);
-	if (it->second.getInvite())
+	if (it->second.getInvite() && it->second.getInvited().find(fd) == it->second.getInvited().end())
 		throw ERR_INVITEONLYCHAN(tmp.getNickname() + " " + it->first);
 	if (it->second.getCl().find(fd) != it->second.getCl().end() && !create)
 		return ;
 	if (!it->second.getPassword().empty() && key.empty())
-		throw ERR_PASSWDMISMATCH(tmp.getNickname());
+		throw ERR_BADCHANNELKEY(tmp.getNickname() + " " + it->first);
 	if (!key.empty() && it->second.getPassword() != key)
 		throw ERR_PASSWDMISMATCH(tmp.getNickname());
 	it->second.getCl().insert(fd);
+	it->second.getInvited().erase(fd);
 	
 	messageToChannel(it->second.getCl(), JOIN_RPL(user_id(tmp.getNickname(), tmp.getUsername()), it->first));
 	if (!it->second.getTopic().empty())

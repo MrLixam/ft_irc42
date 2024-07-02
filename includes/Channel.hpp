@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 19:30:27 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 14:26:34 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ class Channel
 		std::set<int>		_operators;
 		std::string			_topic;
 		bool				_invite;
+		std::set<int>		_invited;
 		bool				_topic_op;
 		std::string			_password;
 		size_t				_limit;
+
 	public:
 	// Constructor 
 		Channel(); 
@@ -44,6 +46,7 @@ class Channel
 		std::set<int>&	getOp(void);
 		std::string		getTopic(void) const;
 		bool 			getInvite(void) const;
+		std::set<int>&	getInvited(void);
 		bool 			getTopic_op(void) const;
 		std::string		getPassword(void) const;
 		size_t			getLimit(void) const;

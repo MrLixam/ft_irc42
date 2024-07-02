@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 20:15:09 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 15:30:17 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ void	Server::kick_user(std::string user_id, std::string nick, it_chan it, std::s
 			throw ERR_NOSUCHNICK(nick + " " + user);
 		if (it->second.getCl().find(dest) == it->second.getCl().end())
 			throw ERR_USERNOTINCHANNEL(nick + " " + user + " " + it->first);
-		it->second.getCl().erase(dest);
-		it->second.getOp().erase(dest);
 		if (comment.empty())
 			messageToChannel(it->second.getCl(), KICK_RPL(user_id, it->first, user, "Kicked by operator"));
 		else
 			messageToChannel(it->second.getCl(), KICK_RPL(user_id, it->first, user, comment));
+		it->second.getCl().erase(dest);
+		it->second.getOp().erase(dest);
 }
 
 void	Server::kick_users(std::string user_id, std::string nick, it_chan it, std::string users, std::string comment = "")
@@ -106,18 +106,16 @@ void	Server::command_invite(struct_msg msg, int fd)
 		throw ERR_NOSUCHNICK(myClient.getNickname() + " " + nick);
 	it_chan it = this->_channels.find(chan);
 	if (it == this->_channels.end())
-	{
-		join_chan(chan, fd, "");
-		it = this->_channels.find(chan);
-	}
+		throw ERR_NOSUCHCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getCl().find(fd) == it->second.getCl().end())
 		throw ERR_NOTONCHANNEL(myClient.getNickname() + " " + it->first);
 	if (it->second.getInvite() && it->second.getOp().find(fd) == it->second.getOp().end())
 		throw ERR_CHANOPRIVSNEEDED(myClient.getNickname() + " " + it->first);
 	if (it->second.getCl().find(dest) != it->second.getCl().end())
 		throw ERR_USERONCHANNEL(myClient.getNickname() + " " + nick + " " + it->first);
-	it->second.getCl().insert(dest);
+	it->second.getInvited().insert(dest);
 	messageToClient(fd, RPL_INVITING(myClient.getNickname(), this->getClient(dest).getNickname(), it->first));
+	messageToClient(dest, msg_source(msg) + " INVITE " + this->getClient(dest).getNickname() + " " + chan + "\r\n");
 }
 
 void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::string param = "")
@@ -134,8 +132,8 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 		{
 			if (modes[0] == '-')
 				it->second.setPassword(0);
-			else if (param.empty() || !format_key(param))
-				throw ERR_NEEDMOREPARAMS(nick);
+			else if (param.empty()/* || !format_key(param)*/)
+				throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " k " + param + " :invalid password");
 			else
 				it->second.setPassword(param);
 		}
@@ -158,7 +156,7 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			if (modes[0] == '-')
 				it->second.setLimit(0);
 			else if (param.empty() || param.find_first_not_of("0123456789") != std::string::npos)
-				throw ERR_NEEDMOREPARAMS(nick);
+				throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " l " + param + " :invalid limit");
 			else
 				it->second.setLimit(atoi(param.c_str()));
 		}

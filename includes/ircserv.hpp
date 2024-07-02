@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 11:30:00 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 15:47:54 by r                ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@
 #define ERR_CHANNELISFULL(errorInfo)			commandException(471, std::string(errorInfo) + std::string(" :Cannot join channel (+l)"))
 #define ERR_UNKNOWNMODE(errorInfo)				commandException(472, std::string(errorInfo) + std::string(" :is unknown mode char to me"))
 #define ERR_INVITEONLYCHAN(errorInfo)			commandException(473, std::string(errorInfo) + std::string(" :Cannot join channel (+i)"))
+#define ERR_BADCHANNELKEY(errorInfo)			commandException(475, std::string(errorInfo) + std::string(" :Cannot join channel (+k)"))
 #define ERR_CHANOPRIVSNEEDED(errorInfo)			commandException(482, std::string(errorInfo) + std::string(" :You're not channel operator"))
+#define ERR_INVALIDMODEPARAM(errorInfo)			commandException(696, std::string(errorInfo))
 
 
 typedef struct structured_message
@@ -56,6 +58,7 @@ bool		format_channel(std::string chan);
 bool		format_key(std::string key);
 bool		msgto_nickname(std::string nick);
 struct_msg	structuring_message(std::string message);
+std::string	msg_source(struct_msg msg);
 int			parseArgs(char **argv);
 
 class commandException : public std::exception
