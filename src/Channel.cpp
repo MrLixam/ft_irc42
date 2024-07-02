@@ -6,7 +6,11 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/07/02 19:58:43 by gpouzet          ###   ########.fr       */
+=======
+/*   Updated: 2024/07/02 19:56:26 by lvincent         ###   ########.fr       */
+>>>>>>> 2251c15 (updates for mode)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +85,8 @@ Channel	&Channel::operator=(const Channel& rhs)
 	}
 	return (modes);
 }
-	chan_modes	Channel::getSaveModes(void) const
+	
+chan_modes	Channel::getSaveModes(void) const
 {
 	chan_modes	oldModes;
 
@@ -90,7 +95,6 @@ Channel	&Channel::operator=(const Channel& rhs)
 	oldModes.topic_op = _topic_op;
 	oldModes.password = _password;
 	oldModes.limit = _limit;
-
 	return (oldModes);
 }
  

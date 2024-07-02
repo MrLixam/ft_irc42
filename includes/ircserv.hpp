@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:23:28 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 19:25:09 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:00:03 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <vector>
 
 #define	ERR_NOSUCHNICK(errorInfo)				commandException(401, std::string(errorInfo) + std::string(" :No such nick/channel"))
 #define	ERR_NOSUCHCHANNEL(errorInfo)			commandException(403, std::string(errorInfo) + std::string(" :No such channel"))

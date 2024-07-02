@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 19:58:06 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 20:05:03 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,16 +207,29 @@ void	Server::mode_reply(chan_modes save, it_chan it, std::string nick)
 		else
 			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "+k " + it->second.getPassword()));
 	}
-	//need to do operator
+	{
+		std::set<int> newOp = it->second.getOp();
+
+		for  (std::set<int>::iterator it = newOp.begin(); it != newOp.end(); it++)
+		{
+			if (save.operators.find(*it) == save.operators.end())
+				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+o " + getClient(*it)));
+		}
+		for  (std::set<int>::iterator it = save.operators.begin(); it != save.operators.end(); it++)
+		{
+			if (save.operators.find(*it) == save.operators.end())
+				messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-o " + getClient(*it)));
+		}
+	}
 	if (it->second.getLimit() != save.limit)
 	{
 		if (it->second.getLimit() == 0)
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "-l"));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "-l"));
 		else
 		{
 			std::stringstream ss;
     	    ss << this->_limit;
-			messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(nick, it->first, "+l " + ss.str()));
+			messageToChannel(it->second.getCl(), RPL_CHANNELMODEIS(nick, it->first, "+l " + ss.str()));
 		}
 	}
 }
@@ -262,10 +275,8 @@ void	Server::command_mode(struct_msg msg, int fd)
 			modes_switch(myClient.getNickname(), it, modes);
 			*/
 	}
-	std::vector<std::string>::iterator	mode_vec = parseMode(modes).begin();
+	std::vector<std::string> mode_vector = parseMode(modes);
+	std::vector<std::string>::iterator	mode_vec = mode_vector.begin();
 	while (mode_vec != modes.end())
-	{
 		modes_switch(myClient.getNickname(), it, *mode_vec, param);
-	}
-	messageToChannel(clientList(it->second.getCl(), it->second.getOp()), RPL_CHANNELMODEIS(myClient.getNickname(), it->first, it->second.getModes()));
 }

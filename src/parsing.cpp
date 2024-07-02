@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 19:28:54 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:00:19 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <cctype>
 #include <vector>
 
-std::vector<std::string>    parseMode(std::vector<std::string> modestring_lst)
+std::vector<std::string>	parseMode(std::vector<std::string> modestring_lst)
 {
     std::vector<std::string> modestring_return;
     for (size_t i = 0; i < modestring_lst.size(); i++)
