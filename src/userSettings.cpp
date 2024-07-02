@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 16:35:10 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 22:18:03 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,13 @@ void	Server::command_nick(struct_msg msg, int fd)
 	if (!myClient.getPass())
 		throw ERR_NOTREGISTERED("*");
 	std::string client;
-	if (!myClient.getNickname().empty())
 		client = myClient.getNickname();
-	else
-		client = "*";
 	if (msg.params.size() < 1)
 		throw ERR_NONICKNAMEGIVEN(client);
 	std::string nick = msg.params.front();
 	format_nickname(client, nick);
 	if (usernameExists(nick, fd) > 0)
-	{
-		if (myClient.getNickname().empty())
-			throw ERR_NICKNAMEINUSE("* " + nick);
-		else
-			throw ERR_NICKNAMEINUSE(myClient.getNickname() + " " + nick);
-	}
+		throw ERR_NICKNAMEINUSE(myClient.getNickname() + " " + nick);
 	update.insert(fd);
 	for (it_chan it = this->_channels.begin(); it != this->_channels.end(); it++)
 		if (it->second.getCl().find(fd) != it->second.getCl().end())
@@ -71,12 +63,7 @@ void	Server::command_user(struct_msg msg, int fd)
 	if (!myClient.getUsername().empty())
 		throw ERR_ALREADYREGISTRED(myClient.getNickname());
 	if (msg.params.size() < 4)
-	{
-		if (myClient.getNickname().empty())
-			throw ERR_NONICKNAMEGIVEN("*");
-		else
-			throw ERR_NONICKNAMEGIVEN(myClient.getNickname());
-	}
+		throw ERR_NONICKNAMEGIVEN(myClient.getNickname());
 	std::list<std::string>::iterator it = msg.params.begin();
 	myClient.setUsername(*it);
 	std::advance(it, 3);
@@ -88,8 +75,6 @@ void	Server::command_quit(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 	std::string	sendoff;
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
 	if (msg.params.size())
 	{
 		std::list<std::string>::iterator    ms = msg.params.begin();

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 21:55:21 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 22:20:21 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,10 +224,7 @@ void	Server::commands(std::string message, int fd)
 			case 13:
 				command_name(msg, fd); break;
 			default:
-				if (tmp.getNickname().empty())
-					throw ERR_UNKNOWNCOMMAND("*");
-				else
-					throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
+				throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
 				break;
 		}
 

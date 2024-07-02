@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:02:19 by r                 #+#    #+#             */
-/*   Updated: 2024/06/30 21:07:40 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 22:21:05 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Client
 	
 	// Getters 
 	int			getFd(void) const					{ return _fd; }
-	std::string getNickname(void) const				{ return _nickname; }
+	std::string getNickname(void) const				{if (!_nickname.empty()) return _nickname; else return "*"; }
 	std::string getUsername(void) const				{ return _username; }
 	std::string	getRealname(void) const				{ return _realname; }
 	std::string	getMessageBuffer(void) const		{ return _messageBuffer; }
