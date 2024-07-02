@@ -6,14 +6,13 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 18:47:25 by r                 #+#    #+#             */
-/*   Updated: 2024/07/01 11:29:49 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 16:37:55 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ircserv.hpp"
 #include <cstdlib>
 #include <string>
-#include <cerrno>
 #include <iostream>
 #include <sstream>
 #include <netdb.h>
@@ -73,23 +72,6 @@ bool	format_hostname(std::string name)
 	return (true);
 }
 
-bool	format_hostaddr(std::string addr) //absolument pas sur de si c'est bon mais ca devrait marcher
-{
-	struct addrinfo hints, *result;
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC ;
-	hints.ai_socktype = SOCK_STREAM ;
-	hints.ai_flags = AI_NUMERICHOST;
-
-	int res = getaddrinfo(addr.c_str(), NULL, &hints, &result);
-	if (res != 0) //getaddrinfo a pas pu faire qque chose;
-		return false;
-	if (result == NULL) //addresse invalide
-		return false;
-	freeaddrinfo(result);
-	return (true);
-}
-
 bool	format_channelid(std::string chan)
 {
 	std::string channelid = chan.substr(1, 5);
@@ -110,7 +92,7 @@ bool	format_chanstring(std::string chanstring)
 bool	format_channel(std::string chan)
 {
 	int	starting = 1;
-	if (chan[0] != '#' && chan[0] != '+' && chan[0] != '!' && chan[0] != '&')
+	if (chan[0] != '#' && chan[0] != '&')
 		return (false);
 	if (chan[0] == '!')
 	{

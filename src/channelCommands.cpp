@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 15:53:09 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 16:39:43 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,24 +231,3 @@ void Server::command_topic(struct_msg msg, int fd)
 			messageToClient(*it_lst, RPL_TOPIC(it->first, it->second.getTopic(), getClient(*it_lst).getNickname()));
 	}
 }
-
-/*
-void	Server::command_who(struct_msg msg, int fd)
-{
-	Client&	myClient = this->getClient(fd);
-
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
-	if (msg.params.size() < 1)
-		throw ERR_NEEDMOREPARAMS(myClient.getNickname());
-	//check if is a channel -> return a list of users
-	//in a channel: <channel> is the channel querried
-
-
-	//check if is a user -> return user info
-	//in a user: <channel> is the litteral character "*"
-
-
-	//RPL_WHOREPLY ->one for each user
-	//RPL_ENDOFWHO -> one after each user
-} */

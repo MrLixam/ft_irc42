@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 14:09:28 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 16:37:44 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ void	Server::commands(std::string message, int fd)
 		messageToClient(tmp.getFd(), RPL_YOURHOST(tmp.getNickname(), "42IRC", "1.0"));
 		messageToClient(tmp.getFd(), RPL_CREATED(tmp.getNickname(), _creationDate));
 		messageToClient(tmp.getFd(), RPL_MYINFO(tmp.getNickname(), "42IRC", "1.0", ".", "it klo"));
-		messageToClient(tmp.getFd(), RPL_ISUPPORT(tmp.getNickname(), "CHANTYPES=&# MODES=3"));
+		messageToClient(tmp.getFd(), RPL_ISUPPORT(tmp.getNickname(), "CHANTYPES=&# MODES=3 CHANMODES=t,o,kl,i NICKLEN=9 MAXTARGETS=1 PREFIX=@"));
 		messageOfTheDay("Welcome to 42IRC", tmp);
 		tmp.setRegistered(true);
 	}
@@ -258,16 +258,10 @@ void Server::receiveData(struct pollfd& it)
 	char buffer[1024];
 	std::string message;
 
-	errno = 0;
 	memset(buffer, 0, 1024);
 	ssize_t rdBytes = recv(it.fd, buffer, 1024, 0);
 	if (rdBytes == -1)
-	{
-		if (errno == EAGAIN || errno == EWOULDBLOCK)
-			return;
-		perror("receiveData: recv() failed");
 		_clients[it.fd].setDisconnect(true);
-	}
 	if (rdBytes == 0)
 	{
 		_clients[it.fd].setDisconnect(true);
@@ -300,10 +294,7 @@ void	Server::sendData(struct pollfd& it)
 	{
 		ssize_t bytes_sent = send(it.fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
 		if (bytes_sent == -1)
-		{
-			if (errno == EAGAIN || errno == EWOULDBLOCK)
-				return;
-		}
+			return;
 		std::string sendBuffer = temp.getSendBuffer();
 		sendBuffer.erase(0, bytes_sent);
 		temp.setSendBuffer(sendBuffer);
@@ -352,5 +343,4 @@ void Server::run(void)
 		close(_fdvec[0].fd);
 		_fdvec.erase(_fdvec.begin());
 	}
-	//deco du serv, il faudra fermer les fd, etc..
 }
