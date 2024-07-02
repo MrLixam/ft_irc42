@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:35 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 23:54:42 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 23:59:10 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,12 @@ int parseArgs(char **argv)
 
 	std::string arg1(argv[1]), arg2(argv[2]);
 
-	if (arg1.empty() || arg2.empty() || arg2.find_first_of(" ") != arg2.npos)
+	if (arg2.find_first_of(" ") != arg2.npos)
+	{
+		std::cout << RED << "You can't put spaces in the server password" << RESET << std::endl;
+		return (1);
+	}
+	if (arg1.empty() || arg2.empty())
 	{
 		std::cout << RED << "You can't put in empty arguments" << RESET << std::endl;
 		return (1);
