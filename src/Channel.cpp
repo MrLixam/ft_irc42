@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 20:05:59 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 21:54:12 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 #include <sys/socket.h>
 // Constructor initializes attributes to 0 by default 
 
-Channel::Channel() : _invite(0), _topic_op(0), _password(""), _limit(0) {}
+Channel::Channel() : _invite(0), _topic_op(true), _password(""), _limit(0) {}
 
-Channel::Channel(int fd) : _invite(0), _topic_op(0), _password(""), _limit(0)
+Channel::Channel(int fd) : _invite(0), _topic_op(true), _password(""), _limit(0)
 {
 	this->_clients.insert(fd);
 	this->_operators.insert(fd);
 }
 
-Channel::Channel(int fd, std::string key) : _invite(0), _topic_op(0), _password(key), _limit(0)
+Channel::Channel(int fd, std::string key) : _invite(0), _topic_op(true), _password(key), _limit(0)
 {
 	this->_clients.insert(fd);
 	this->_operators.insert(fd);
