@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 19:00:22 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 19:58:43 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ Channel	&Channel::operator=(const Channel& rhs)
 	oldModes.topic_op = _topic_op;
 	oldModes.password = _password;
 	oldModes.limit = _limit;
+
+	return (oldModes);
 }
  
 // Setters 

@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 19:34:38 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 19:58:06 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	Server::command_invite(struct_msg msg, int fd)
 	messageToClient(dest, msg_source(msg) + " INVITE " + this->getClient(dest).getNickname() + " " + chan + "\r\n");
 }
 
-void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::string param = "")
+void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::vector<std::string> &param)
 {
 	if (modes[0] != '+' && modes[0] != '-')
 		throw ERR_UNKNOWNMODE(nick + " " + modes[0]);
@@ -132,24 +132,30 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 				it->second.setTopic_op(modes[0] == '+');
 			else if (modes[i] == 'k')
 			{
-				if (param.empty())
-					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " k " + param + " :invalid password");
-				else if (modes[0] == '-' && it->second.getPassword() == param)
+				if (!param.size())
+					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " k" + " :invalid password");
+				std::vector<std::string>::iterator it_param = param.begin();
+				std::string key = *it_param;
+				param.erase(it_param);
+				if (modes[0] == '-' && it->second.getPassword() == key)
 					it->second.setPassword(0);
 				else (it->second.getPassword().empty())
-					it->second.setPassword(param);
+					it->second.setPassword(key);
 				else
-					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " k " + param + " :Channel key already set");
+					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " k " + key + " :Channel key already set");
 			}
 			else if (modes[i] == 'o')
 			{
-				if (param.empty())
-					throw ERR_NEEDMOREPARAMS(nick);
-				int user = usernameExists(param, -1);
+				if (!param.size())
+					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " o" + " :invalid user");
+				std::vector<std::string>::iterator it_param = param.begin();
+				std::string new_op = *it_param;
+				param.erase(it_param);
+				int user = usernameExists(new_op, -1);
 				if (user < 0)
-					throw ERR_NEEDMOREPARAMS(nick);
+					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " o" + " :invalid user");
 				if (it->second.getCl().find(user) == it->second.getCl().end())
-					throw ERR_USERNOTINCHANNEL(nick + " " + param + " " + it->first);
+					throw ERR_USERNOTINCHANNEL(nick + " " + new_op + " " + it->first);
 				else if (modes[0] == '-')
 					it->second.getOp().erase(user);
 				else
@@ -159,10 +165,17 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			{
 				if (modes[0] == '-')
 					it->second.setLimit(0);
-				else if (param.empty() || param.find_first_not_of("0123456789") != std::string::npos)
-					throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " l " + param + " :invalid limit");
-				else
-					it->second.setLimit(atoi(param.c_str()));
+				else {
+					if (!param.size())
+						throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " l" + " :invalid limit");
+					std::vector<std::string>::iterator it_param = param.begin();
+					std::string limit = *it_param;
+					param.erase(it_param);
+					if (limit.find_first_not_of("0123456789") != std::string::npos)
+						throw ERR_INVALIDMODEPARAM(nick + " " + it->first + " l " + limit + " :invalid limit");
+					else
+						it->second.setLimit(atoi(limit.c_str()));
+				}
 			}
 			else
 				throw ERR_UNKNOWNMODE(nick + " " + modes[i]);
