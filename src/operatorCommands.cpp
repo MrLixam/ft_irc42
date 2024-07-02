@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 20:55:55 by gpouzet          ###   ########.fr       */
+/*   Updated: 2024/07/02 21:17:50 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,14 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			else
 				throw ERR_UNKNOWNMODE(nick + " " + modes[i]);
 		}
-		catch (commandException& e) {}
+		catch (commandException& e)
+		{
+			std::cout << RED << "privmsg: send error code " << e._errorCode << RESET << std::endl;
+			std::ostringstream convert;
+			convert << e._errorCode;
+			std::string message = ":42IRC " + convert.str() + " " + e._errorMessage + "\r\n";
+			myClient.appendSendBuffer(message);
+		}
 	}
 }
 
