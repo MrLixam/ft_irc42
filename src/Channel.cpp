@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 13:22:46 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 14:09:04 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,46 +14,39 @@
 #include <sys/socket.h>
 // Constructor initializes attributes to 0 by default 
 
-Channel::Channel() : _invite(0), _topic_op(0), _password(""), _limit(0)
-{
-	std::cout << "Channel constructor called" << std::endl;
-}
+Channel::Channel() : _invite(0), _topic_op(0), _password(""), _limit(0) {}
 
 Channel::Channel(int fd) : _invite(0), _topic_op(0), _password(""), _limit(0)
 {
-	std::cout << "Channel constructor called" << std::endl;
 	this->_clients.insert(fd);
 	this->_operators.insert(fd);
 }
 
 Channel::Channel(int fd, std::string key) : _invite(0), _topic_op(0), _password(key), _limit(0)
 {
-	std::cout << "Channel constructor called" << std::endl;
 	this->_clients.insert(fd);
 	this->_operators.insert(fd);
 }
 
 Channel::Channel(const Channel& rhs)
 {
-	std::cout << "Channel copy constructor called" << std::endl;
 	*this = rhs;
 }
 
-Channel::~Channel()
-{
-	std::cout << "Channel destructor called" << std::endl;
-}
+Channel::~Channel() {}
 
 Channel	&Channel::operator=(const Channel& rhs)
 {
-//	(void)rhs;
-//	_clients = rhs._clients;
-//	_operators = rhs._operators;
-	this->_topic = rhs.getTopic();
-	this->_invite = rhs.getInvite();
-	this->_topic_op = rhs.getTopic_op();
-	this->_password = rhs.getPassword();
-	this->_limit = rhs.getLimit();
+	if (this != &rhs)
+	{
+		_clients = rhs._clients;
+		_operators = rhs._operators;
+		this->_topic = rhs._topic;
+		this->_invite = rhs._invite;
+		this->_topic_op = rhs._topic_op;
+		this->_password = rhs._password;
+		this->_limit = rhs._limit;
+	}
 	return *this;
 }
 

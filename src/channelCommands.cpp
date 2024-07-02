@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 12:39:01 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 14:06:18 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,18 @@ void	Server::create_chan(std::string chan, int fd, std::string key = "")
 	if (!format_channel(chan))
 		throw ERR_NOSUCHCHANNEL(tmp.getNickname() + " " + chan);
 	if (key.empty())
-		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd)));
+		_channels[chan] = Channel(fd);
 	else
 	{
 		if (!format_key(key))
 			throw ERR_NEEDMOREPARAMS(tmp.getNickname());
-		_channels.insert(std::pair<std::string, Channel>(chan, Channel(fd, key)));
+		_channels[chan] = Channel(fd, key);
 	}
 }
 
 void	Server::join_chan(std::string chan, int fd, std::string key = "")
 {
+	bool create = false;
 	it_chan it = this->_channels.find(chan);
 	Client& tmp = getClient(fd);
 	
@@ -62,13 +63,13 @@ void	Server::join_chan(std::string chan, int fd, std::string key = "")
 		it = this->_channels.find(chan);
 		if (it == this->_channels.end())
 			throw ERR_NOTREGISTERED("0");
-		it->second.getOp().insert(fd);
+		create = true;
 	}
-	if (it->second.getLimit() > 0 && it->second.getLimit() >= it->second.getCl().size())
+	if (it->second.getLimit() > 0 && it->second.getLimit() <= it->second.getCl().size())
 		throw ERR_CHANNELISFULL(tmp.getNickname() + " " + it->first);
 	if (it->second.getInvite())
 		throw ERR_INVITEONLYCHAN(tmp.getNickname() + " " + it->first);
-	if (it->second.getCl().find(fd) != it->second.getCl().end())
+	if (it->second.getCl().find(fd) != it->second.getCl().end() && !create)
 		return ;
 	if (!it->second.getPassword().empty() && key.empty())
 		throw ERR_PASSWDMISMATCH(tmp.getNickname());

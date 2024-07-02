@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 17:41:08 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 14:09:28 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,11 @@ void	Server::commands(std::string message, int fd)
 			case 13:
 				command_name(msg, fd); break;
 			default:
-				throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
+				if (tmp.getNickname().empty())
+					throw ERR_UNKNOWNCOMMAND("*");
+				else
+					throw ERR_UNKNOWNCOMMAND(tmp.getNickname());
+				break;
 		}
 
 	}
@@ -291,6 +295,7 @@ void	Server::sendData(struct pollfd& it)
 	Client& temp = _clients[it.fd];
 	
 	std::string buff = temp.getSendBuffer();
+	std::cout << "Sending message to client " << it.fd << ": " << buff << std::endl;
 	while (!temp.getSendBuffer().empty())
 	{
 		ssize_t bytes_sent = send(it.fd, temp.getSendBuffer().c_str(), temp.getSendBuffer().size(), 0);
