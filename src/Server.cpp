@@ -181,7 +181,6 @@ std::map<std::string, int> initCmdMap(void)
 
 void	Server::commands(std::string message, int fd)
 {
-
 	static std::map<std::string, int> CommandMap = initCmdMap();
 	struct_msg	msg = structuring_message(message);
 

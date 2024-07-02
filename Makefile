@@ -6,29 +6,25 @@
 #    By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/18 05:51:01 by lvincent          #+#    #+#              #
-#    Updated: 2024/07/01 20:13:11 by lvincent         ###   ########.fr        #
+#    Updated: 2024/07/02 22:57:24 by gpouzet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-GREEN = \033[1;32m
+GREEN	=	\033[1;32m
+RED	=	\033[1;31m
+RESET	=	\033[0m
 
-RED = \033[1;31m
-
-RESET = \033[0m
-
-CC 		=	clang++ 
-
-FLAGS 	=	-Werror -Wall -Wextra -std=c++98
 NAME 	=	ircserv
+CC 	=	c++ 
+FLAGS 	=	-Werror -Wall -Wextra -std=c++98
 
-SRC_DIR = src
-
-OBJ_DIR = obj
+SRC_DIR =	src
+OBJ_DIR =	obj
 
 SRC 	=	src/main.cpp src/Channel.cpp src/Client.cpp src/Server.cpp \
 			src/parsing.cpp src/ServerUtils.cpp src/format_BNF.cpp\
 			src/userSettings.cpp src/channelCommands.cpp src/operatorCommands.cpp 
-OBJ = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
+OBJ 	:=	$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC))
 
 all: $(NAME)
 
