@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:06 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 14:29:48 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 19:00:22 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,33 +62,34 @@ Channel	&Channel::operator=(const Channel& rhs)
 	size_t				Channel::getLimit(void)	const				{ return _limit; }
 	std::string			Channel::getModes(void) const
 {
-	std::string modes = "no modes actif";
+	std::string modes = "+";
 	if (this->_invite)
-		modes = "+i";
+		modes += "i";
 	if (this->_topic_op)
-	{
-		if (modes == "no modes actif")
-			modes = "+t";
-		else
-			modes += "t";
-	}
+		modes += "t";
 	if (!this->_password.empty())
-	{
-		if (modes == "no modes actif")
-			modes = "+k";
-		else
-			modes += "k";
-	}
+		modes += "k";
+	if (this->_limit > 0)
+		modes += "l";
+	if (!this->_password.empty())
+		modes += " " + this->_password;
 	if (this->_limit > 0)
 	{
 		std::stringstream ss;
 		ss << this->_limit;
-		if (modes == "no modes actif")
-			modes = "+l " + ss.str();
-		else
-			modes += "l " + ss.str();
+		modes += " " + ss.str();
 	}
 	return (modes);
+}
+	chan_modes	Channel::getSaveModes(void) const
+{
+	chan_modes	oldModes;
+
+	oldModes.operators = _operators;
+	oldModes.invite = _invite;
+	oldModes.topic_op = _topic_op;
+	oldModes.password = _password;
+	oldModes.limit = _limit;
 }
  
 // Setters 

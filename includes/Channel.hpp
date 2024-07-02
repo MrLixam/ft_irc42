@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 13:28:08 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 14:26:34 by r                ###   ########.fr       */
+/*   Updated: 2024/07/02 18:38:16 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@
 # include <sstream>
 # include <set>
 # include "Client.hpp"
+
+typedef struct channel_modes_save
+{
+	std::set<int>	operators;
+	bool			invite;
+	bool			topic_op;
+	std::string		password;
+	size_t			limit;
+}					chan_modes;
 
 // Class definition
 class Channel
@@ -51,6 +60,7 @@ class Channel
 		std::string		getPassword(void) const;
 		size_t			getLimit(void) const;
 		std::string		getModes(void) const;
+		chan_modes		getSaveModes(void) const;
 	
 	// Setters 
 		void			setTopic(std::string topic); 

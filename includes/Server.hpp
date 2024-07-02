@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 15:52:26 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 17:27:28 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 19:23:50 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ class Server
         void		command_kick(struct_msg msg, int fd);
         void		command_invite(struct_msg msg, int fd);
         void		modes_switch(std::string nick, it_chan it, std::string modes, std::string param);
+		void		mode_reply(chan_modes save, it_chan it, std::string nick);
         void		command_mode(struct_msg msg, int fd);
 
 		//Utils

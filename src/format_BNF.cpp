@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 18:47:25 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 16:37:55 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 18:18:18 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,21 +113,6 @@ bool	format_channel(std::string chan)
         chanstring = chan.substr(starting);
 	if (chanstring.empty() || !format_chanstring(chanstring))
 		return (false);
-	return (true);
-}
-
-bool	format_key(std::string key)
-{
-	size_t	s = key.length();
-	if (s < 1 || s > 23)
-		return (false);
-	for (size_t i = 0; i < s; ++i) 
-	{
-		char c = key[i];
-		if (!((c >= 0x01 && c <= 0x05) || (c >= 0x07 && c <= 0x08) || c == 0x0C ||
-              (c >= 0x0E && c <= 0x1F) || (c >= 0x21 && c >= 0x7f)))
-			return (false);
-	}
 	return (true);
 }
 
