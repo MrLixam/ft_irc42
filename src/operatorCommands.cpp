@@ -6,12 +6,13 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:46:00 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 21:29:22 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/02 21:33:53 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 #include "../includes/replies.hpp"
+#include "../includes/colors.hpp"
 
 void	Server::kick_user(std::string user_id, std::string nick, it_chan it, std::string user, std::string comment = "")
 {
@@ -118,7 +119,7 @@ void	Server::command_invite(struct_msg msg, int fd)
 	messageToClient(dest, msg_source(msg) + " INVITE " + this->getClient(dest).getNickname() + " " + chan + "\r\n");
 }
 
-void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::vector<std::string>& param)
+void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::vector<std::string>& param, int fd)
 {
 	if (modes[0] != '+' && modes[0] != '-')
 		throw ERR_UNKNOWNMODE(nick + " " + modes[0]);
@@ -186,7 +187,7 @@ void	Server::modes_switch(std::string nick, it_chan it, std::string modes, std::
 			std::ostringstream convert;
 			convert << e._errorCode;
 			std::string message = ":42IRC " + convert.str() + " " + e._errorMessage + "\r\n";
-			myClient.appendSendBuffer(message);
+			getClient(fd).appendSendBuffer(message);
 		}
 	}
 }
@@ -291,6 +292,6 @@ void	Server::command_mode(struct_msg msg, int fd)
 	}
 	std::vector<std::string> mode_vector = parseMode(modes);
 	for (size_t	mode_vec = 0; mode_vec < modes.size(); mode_vec++)
-		modes_switch(myClient.getNickname(), it, mode_vector[mode_vec], param);
+		modes_switch(myClient.getNickname(), it, mode_vector[mode_vec], param, fd);
 	mode_reply(save, it, user_id(myClient.getNickname(), myClient.getUsername()));
 }
