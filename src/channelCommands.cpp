@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/16 15:38:23 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 20:18:02 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/03 11:41:35 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ void	Server::command_join(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
+	if (!myClient.getRegistered())
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 	if (msg.params.size() < 1)
         throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
@@ -127,8 +127,8 @@ void	Server::command_privmsg(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-			throw ERR_NOTREGISTERED("*");
+	if (!myClient.getRegistered())
+			throw ERR_NOTREGISTERED(myClient.getNickname());
 	if (msg.params.size() < 2)
         throw ERR_NOTEXTTOSEND(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
@@ -171,8 +171,8 @@ void	Server::command_part(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
+	if (!myClient.getRegistered())
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 	if (msg.params.size() < 1)
         throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 
@@ -202,8 +202,8 @@ void Server::command_topic(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
+	if (!myClient.getRegistered())
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 	if (msg.params.size() < 1)
         throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	std::list<std::string>::iterator	ms = msg.params.begin(); 

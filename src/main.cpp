@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:31 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/01 12:22:16 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/03 11:49:36 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,16 @@ void sig_handler(int sig)
 
 int main(int argc, char **argv)
 {
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sig_handler);
+
 	if (argc != 3)
 	{
 		std::cout << "Invalid number of arguments, Correct usage as follows:" << std::endl;
 		std::cout << "./ircserv <port> <password>" << std::endl;
 		return (1);
 	}
-	
-	signal(SIGINT, sig_handler);
-	signal(SIGTERM, sig_handler);
+
 	if (parseArgs(argv))
 	{
 		std::cout << RED << "Invalid arguments" << RESET << std::endl;
@@ -102,10 +103,6 @@ int main(int argc, char **argv)
 	catch (std::exception &e)
 	{
 		std::cerr << RED << "Error: " << e.what() << RESET << std::endl;
-	}
-	catch (int e)
-	{
-		std::cerr << RED << "Error, int caught: " << e << RESET << std::endl;
 	}
 	return (0);
 }

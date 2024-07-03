@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:27:40 by lvincent          #+#    #+#             */
-/*   Updated: 2024/07/02 22:20:21 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/03 11:42:26 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +237,7 @@ void	Server::commands(std::string message, int fd)
 		tmp.appendSendBuffer(message);
 	}
 
-	if (!tmp.getRegistered() && tmp.getPass() && !tmp.getNickname().empty() && !tmp.getRealname().empty())
+	if (!tmp.getRegistered() && tmp.getPass() && tmp.getNickname() != "*" && !tmp.getRealname().empty())
 	{
 		messageToClient(tmp.getFd(), RPL_WELCOME(tmp.getNickname(), user_id(tmp.getNickname(), tmp.getUsername())));
 		messageToClient(tmp.getFd(), RPL_YOURHOST(tmp.getNickname(), "42IRC", "1.0"));

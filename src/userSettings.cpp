@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:27:35 by r                 #+#    #+#             */
-/*   Updated: 2024/07/02 22:18:03 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/03 11:41:34 by lvincent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	Server::command_nick(struct_msg msg, int fd)
 	std::set<int>	update;
 
 	if (!myClient.getPass())
-		throw ERR_NOTREGISTERED("*");
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 	std::string client;
 		client = myClient.getNickname();
 	if (msg.params.size() < 1)
@@ -59,7 +59,7 @@ void	Server::command_user(struct_msg msg, int fd)
 	Client&	myClient = this->getClient(fd);
 
 	if (!myClient.getPass())
-		throw ERR_NOTREGISTERED("*");
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 	if (!myClient.getUsername().empty())
 		throw ERR_ALREADYREGISTRED(myClient.getNickname());
 	if (msg.params.size() < 4)
@@ -105,8 +105,8 @@ void	Server::command_ping(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
+	if (!myClient.getRegistered())
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 	if (msg.params.size() != 1)
 		throw ERR_NEEDMOREPARAMS(myClient.getNickname());
 	messageToClient(fd, PONG_RPL(user_id(myClient.getNickname(), myClient.getUsername()), "42IRC"));
@@ -117,8 +117,8 @@ void	Server::command_name(struct_msg msg, int fd)
 {
 	Client&	myClient = this->getClient(fd);
 
-	if (!myClient.getPass() || myClient.getNickname().empty() || myClient.getUsername().empty())
-		throw ERR_NOTREGISTERED("*");
+	if (!myClient.getRegistered())
+		throw ERR_NOTREGISTERED(myClient.getNickname());
 
 	if (msg.params.size())
 	{
