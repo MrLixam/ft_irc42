@@ -6,7 +6,7 @@
 /*   By: lvincent <lvincent@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 18:47:25 by r                 #+#    #+#             */
-/*   Updated: 2024/07/03 11:51:11 by lvincent         ###   ########.fr       */
+/*   Updated: 2024/07/03 12:00:25 by gpouzet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,45 +72,38 @@ bool	format_hostname(std::string name)
 	return (true);
 }
 
-bool	format_channelid(std::string chan)
-{
-	std::string channelid = chan.substr(1, 5);
-	for (size_t i = 1; i < channelid.length(); i++)
-		if (!isupper(channelid[i]) && !isdigit(channelid[i]))
-			return (false);
-	return (true);
-}
-
 bool	format_chanstring(std::string chanstring)
 {
 	for (size_t i = 0; i < chanstring.length(); ++i) 
-		if (!(isalnum(chanstring[i]) || chanstring[i] == '_'))
-			return false;
+	{
+		char c = chanstring[i];
+		if (!((c >= 0x01 && c <= 0x07) ||
+              (c >= 0x08 && c <= 0x09) ||
+              (c >= 0x0B && c <= 0x0C) ||
+              (c >= 0x0E && c <= 0x1F) ||
+              (c >= 0x21 && c <= 0x2B) ||
+              (c >= 0x2B && c <= 0x39) ||
+              c >= 0x3B))
+            return (false);
+	}
 	return (true);
 }
 
 bool	format_channel(std::string chan)
 {
-	int	starting = 1;
 	if (chan[0] != '#' && chan[0] != '&')
 		return (false);
-	if (chan[0] == '!')
-	{
-		if (!format_channelid(chan))
-			return (false);
-		starting = 5;
-	}
     std::string chanstring;
 	size_t colonPos = chan.find(':');
     if (colonPos != std::string::npos)
 	{
-        chanstring = chan.substr(starting, colonPos - 1);
+        chanstring = chan.substr(1, colonPos - 1);
         std::string optionalChanstring = chan.substr(colonPos + 1);
 		if (optionalChanstring.empty() || !format_chanstring(optionalChanstring))
 			return (false);
 	}
 	else
-        chanstring = chan.substr(starting);
+        chanstring = chan.substr(1);
 	if (chanstring.empty() || !format_chanstring(chanstring))
 		return (false);
 	return (true);
